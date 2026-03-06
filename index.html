@@ -1,17 +1,572 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>k8ss.com</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>k8ss.com — 域名出售中 ✨</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --pink:        #FFD1DC;
+      --pink-dark:   #FF85A1;
+      --cream:       #FFF9F5;
+      --mint:        #C1FBA4;
+      --mint-deep:   #A8F090;
+      --purple:      #E6D3F7;
+      --purple-deep: #C9A8F5;
+      --purple-dark: #A97DE8;
+      --yellow:      #FFF0A3;
+
+      --radius-md:   24px;
+      --radius-lg:   36px;
+      --radius-xl:   48px;
+      --radius-full: 9999px;
+
+      --shadow-card: 0 12px 40px rgba(180, 120, 200, 0.2);
+      --shadow-btn:  0 6px 20px rgba(255, 133, 161, 0.4);
+
+      --ease-bounce: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-soft:   cubic-bezier(0.4, 0, 0.2, 1);
+
+      --font-cute:  'Ma Shan Zheng', cursive;
+      --font-round: 'Nunito', sans-serif;
+      --font-light: 'Quicksand', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-round);
+      background: linear-gradient(160deg, var(--cream) 0%, #FEF0FF 55%, #F0F8FF 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #5a3d6b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── 背景气泡 ── */
+    .bg-blobs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .blob {
+      position: absolute;
+      border-radius: var(--radius-full);
+      filter: blur(80px);
+      opacity: 0.32;
+      animation: blobFloat 14s ease-in-out infinite alternate;
+    }
+    .blob-1 { width: 520px; height: 520px; background: var(--pink);   top: -120px; left: -120px; animation-delay: 0s; }
+    .blob-2 { width: 420px; height: 420px; background: var(--purple); bottom: -80px; right: -80px; animation-delay: -5s; }
+    .blob-3 { width: 300px; height: 300px; background: var(--mint);   top: 50%; left: 40%;        animation-delay: -10s; }
+
+    @keyframes blobFloat {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(24px, 18px) scale(1.07); }
+    }
+
+    /* ── 粒子画布 ── */
+    #particle-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── 主体 ── */
+    .page {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 680px;
+      padding: 48px 24px 52px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+    }
+
+    /* ── 欢迎徽章 ── */
+    .welcome-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: white;
+      font-family: var(--font-round);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 7px 20px;
+      border-radius: var(--radius-full);
+      box-shadow: 0 4px 16px rgba(255, 133, 161, 0.3);
+      animation: popIn 0.6s var(--ease-bounce) both;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── 浮动装饰 ── */
+    .floaters {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .floater {
+      position: absolute;
+      animation: floatY 5s ease-in-out infinite alternate;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
+    }
+    .floater:nth-child(1) { font-size: 2.6rem; top: 6%;  left: 4%;  animation-delay: 0s; }
+    .floater:nth-child(2) { font-size: 2.2rem; top: 8%;  right: 5%; animation-delay: -1.8s; }
+    .floater:nth-child(3) { font-size: 1.8rem; bottom: 12%; left: 5%; animation-delay: -3.2s; }
+    .floater:nth-child(4) { font-size: 2rem;   bottom: 10%; right: 4%; animation-delay: -4.5s; }
+
+    @keyframes floatY {
+      from { transform: translateY(0) rotate(-4deg); }
+      to   { transform: translateY(-16px) rotate(4deg); }
+    }
+
+    /* ── 域名大标题区 ── */
+    .hero {
+      text-align: center;
+      animation: fadeSlideUp 0.7s var(--ease-bounce) 0.1s both;
+    }
+
+    .domain-name {
+      display: inline-block;
+      font-family: var(--font-round);
+      font-size: clamp(4rem, 16vw, 7.5rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #FF85A1 0%, #A97DE8 50%, #5BC8FA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 4px 18px rgba(169, 125, 232, 0.3));
+      line-height: 1;
+    }
+    .domain-underline {
+      height: 5px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(90deg, #FFB3C6, #C9A8F5, #A8F090);
+      margin-top: 6px;
+      animation: scaleIn 0.6s var(--ease-bounce) 0.8s both;
+    }
+
+    .hero-sub {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    .tag {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-light);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .tag-pink   { background: rgba(255,209,220,0.7); color: #c05070; }
+    .tag-mint   { background: rgba(193,251,164,0.7); color: #2d7a3a; }
+    .tag-purple { background: rgba(230,211,247,0.7); color: #7b4fa0; }
+    .tag-blue   { background: rgba(200,235,255,0.7); color: #2d6ea0; }
+
+    /* ── 主卡片（价格 + 联系） ── */
+    .main-card {
+      width: 100%;
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(18px) saturate(1.6);
+      -webkit-backdrop-filter: blur(18px) saturate(1.6);
+      border: 2px solid rgba(255,255,255,0.75);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,0.8);
+      padding: 36px 32px 32px;
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr;
+      gap: 0 28px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeSlideUp 0.8s var(--ease-bounce) 0.35s both;
+      transition: transform 0.3s var(--ease-bounce), box-shadow 0.3s var(--ease-soft);
+    }
+    .main-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 60px rgba(180, 120, 200, 0.26);
+    }
+    .main-card::before {
+      content: '';
+      position: absolute;
+      top: -50px; right: -50px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(255,209,220,0.5), transparent 70%);
+      border-radius: var(--radius-full);
+      pointer-events: none;
+    }
+    .main-card::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: -40px;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(230,211,247,0.45), transparent 70%);
+      border-radius: var(--radius-full);
+      pointer-events: none;
+    }
+
+    /* 竖分隔线 */
+    .card-divider {
+      width: 1px;
+      height: 120px;
+      background: linear-gradient(to bottom, transparent, rgba(201,168,245,0.4), transparent);
+      align-self: center;
+    }
+
+    /* 价格侧 */
+    .price-side {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .price-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--mint), var(--mint-deep));
+      color: #2d7a3a;
+      font-family: var(--font-round);
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      margin-bottom: 10px;
+      box-shadow: 0 3px 10px rgba(161,240,144,0.45);
+    }
+    .price-label {
+      font-family: var(--font-cute);
+      font-size: 1rem;
+      color: #9b72bc;
+      margin-bottom: 6px;
+    }
+    .price-amount {
+      font-family: var(--font-round);
+      font-size: clamp(2.4rem, 8vw, 3.6rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #FF85A1, #C9A8F5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+      filter: drop-shadow(0 2px 8px rgba(201,168,245,0.35));
+    }
+    .price-note {
+      font-family: var(--font-light);
+      font-size: 0.78rem;
+      color: #b08ccc;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    /* 联系侧 */
+    .contact-side {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .contact-label {
+      font-family: var(--font-cute);
+      font-size: 1rem;
+      color: #9b72bc;
+      margin-bottom: 12px;
+    }
+    .qr-placeholder {
+      width: 120px;
+      height: 120px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(255,209,220,0.6), rgba(230,211,247,0.6));
+      border: 2px dashed rgba(201,168,245,0.65);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: #b08ccc;
+      font-family: var(--font-round);
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin: 0 auto 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .qr-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg, transparent, transparent 7px,
+        rgba(255,255,255,0.28) 7px, rgba(255,255,255,0.28) 8px
+      );
+    }
+    .qr-icon { font-size: 2.2rem; position: relative; z-index: 1; }
+    .qr-text { position: relative; z-index: 1; line-height: 1.4; }
+    .contact-hint {
+      font-family: var(--font-light);
+      font-size: 0.78rem;
+      color: #b08ccc;
+      font-weight: 500;
+    }
+    .contact-funny {
+      margin-top: 10px;
+      font-family: var(--font-cute);
+      font-size: 0.92rem;
+      color: #c266a0;
+      line-height: 1.7;
+    }
+    .contact-tip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 8px;
+      padding: 5px 12px;
+      background: rgba(255, 240, 163, 0.55);
+      border: 1.5px dashed rgba(220, 180, 60, 0.5);
+      border-radius: var(--radius-full);
+      font-family: var(--font-light);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #a07820;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── 按钮 ── */
+    .btn-buy {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 13px 32px;
+      background: linear-gradient(135deg, #FF85A1, #C9A8F5);
+      color: white;
+      font-family: var(--font-round);
+      font-weight: 800;
+      font-size: 1rem;
+      border: none;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      box-shadow: var(--shadow-btn);
+      text-decoration: none;
+      animation: fadeSlideUp 0.7s var(--ease-bounce) 0.6s both;
+      transition: transform 0.25s var(--ease-bounce), box-shadow 0.25s var(--ease-soft);
+    }
+    .btn-buy:hover  { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 28px rgba(255,133,161,0.5); }
+    .btn-buy:active { transform: translateY(0) scale(0.97); }
+
+    /* ── 流程小标签 ── */
+    .process-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      animation: fadeSlideUp 0.6s var(--ease-bounce) 0.75s both;
+    }
+    .ps {
+      background: rgba(255,255,255,0.65);
+      border: 1.5px solid rgba(201,168,245,0.4);
+      border-radius: var(--radius-full);
+      padding: 5px 14px;
+      font-family: var(--font-round);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #8a5daa;
+      white-space: nowrap;
+    }
+    .pa { font-size: 1rem; color: #c9a8f5; }
+
+    /* ── 底部版权 ── */
+    footer {
+      font-family: var(--font-light);
+      font-size: 0.78rem;
+      color: #c4a8da;
+      font-weight: 500;
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding-bottom: 8px;
+      animation: fadeSlideUp 0.5s var(--ease-bounce) 0.9s both;
+    }
+
+    /* ── 通用动画 ── */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(26px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.7); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scaleX(0); }
+      to   { opacity: 1; transform: scaleX(1); }
+    }
+
+    /* ── 响应式 ── */
+    @media (max-width: 560px) {
+      .main-card {
+        grid-template-columns: 1fr;
+        gap: 24px 0;
+        padding: 28px 22px;
+      }
+      .card-divider {
+        width: 80px; height: 1px;
+        background: linear-gradient(to right, transparent, rgba(201,168,245,0.4), transparent);
+        justify-self: center;
+      }
+      .floater:nth-child(3),
+      .floater:nth-child(4) { display: none; }
+      .page { padding: 40px 16px 44px; gap: 22px; }
+    }
+    @media (max-width: 380px) {
+      .process-row { flex-direction: column; }
+      .pa { transform: rotate(90deg); display: inline-block; }
+    }
+  </style>
 </head>
 <body>
-    <div>
-        <p>QQ: 857815116</p>
+
+<div class="bg-blobs" aria-hidden="true">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+<div class="floaters" aria-hidden="true">
+  <span class="floater">☁️</span>
+  <span class="floater">🐻</span>
+  <span class="floater">🌸</span>
+  <span class="floater">⭐</span>
+</div>
+
+<main class="page">
+
+  <!-- 欢迎徽章 -->
+  <div class="welcome-badge">酱酱~ 有缘人请进 ✨</div>
+
+  <!-- 域名展示 -->
+  <div class="hero">
+    <div class="domain-name">k8ss.com</div>
+    <div class="domain-underline"></div>
+    <div class="hero-sub">
+      <span class="tag tag-pink">🧠 极简易记</span>
+      <span class="tag tag-mint">⚡ 技术感强</span>
+      <span class="tag tag-purple">💎 稀缺短域</span>
+      <span class="tag tag-blue">☸️ Kubernetes 品牌首选</span>
     </div>
-    <p style="font-size: 200px;font-weight: bolder;text-align: center;">构建万物</p>
-    <p style="font-size: 200px;font-weight: bolder;text-align: center;">建構萬物</p>
-    <p style="font-size: 200px;font-weight: bolder;text-align: center;">Build all things</p>
-    <p style="font-size: 200px;font-weight: bolder;text-align: center;">Стройте все вещи</p>
+  </div>
+
+  <!-- 主卡片：价格 + 联系 -->
+  <div class="main-card">
+
+    <div class="price-side">
+      <div class="price-badge">🔥 诚意出售</div>
+      <p class="price-label">💰 出售价格</p>
+      <div class="price-amount">¥50,000</div>
+      <p class="price-note">支持阿里云 / 腾讯云过户<br/>交易安全有保障 🛡️</p>
+    </div>
+
+    <div class="card-divider" aria-hidden="true"></div>
+
+    <div class="contact-side">
+      <p class="contact-label">💌 扫码联系卖家</p>
+      <div class="qr-placeholder" role="img" aria-label="占位符">
+        <span class="qr-icon">🫙</span>
+        <span class="qr-text">二维码<br/>摆烂中</span>
+      </div>
+      <p class="contact-funny">诶~不对呀 我没有微信<br/>我只有 🐧 QQ！</p>
+      <p class="contact-tip">🔍 TIP: 查看网页源代码可获取</p>
+    </div>
+
+  </div>
+
+  <!-- 交易流程 -->
+  <div class="process-row" aria-label="交易流程">
+    <span class="ps">确认意向</span>
+    <span class="pa" aria-hidden="true">→</span>
+    <span class="ps">支付钱款</span>
+    <span class="pa" aria-hidden="true">→</span>
+    <span class="ps">平台过户</span>
+  </div>
+
+</main>
+
+<footer>© 2026 k8ss.com 域名出售 &nbsp;|&nbsp; 本页面仅为展示用途</footer>
+
+<!--
+  ────────────────────────────────────────────
+  👀 哇，你真的看源代码了！有眼光～
+  🐧 卖家 857815116
+  （请备注「k8ss.com 域名购买」）
+  ────────────────────────────────────────────
+-->
+<script>
+(function () {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  const EMOJIS = ['❤️', '🌸', '⭐', '✨', '🫧', '🌷', '💜', '🍬'];
+  const COUNT = 22;
+  let W = 0, H = 0, particles = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function make(yStart) {
+    return {
+      x: Math.random() * W,
+      y: yStart ?? (Math.random() * H),
+      e: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
+      s: 11 + Math.random() * 13,
+      vy: 0.35 + Math.random() * 0.55,
+      vx: (Math.random() - 0.5) * 0.45,
+      r: Math.random() * Math.PI * 2,
+      rv: (Math.random() - 0.5) * 0.025,
+      a: 0.45 + Math.random() * 0.5,
+    };
+  }
+
+  function init() { resize(); particles = Array.from({ length: COUNT }, () => make(null)); }
+
+  function tick() {
+    ctx.clearRect(0, 0, W, H);
+    for (const p of particles) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.r);
+      ctx.globalAlpha = p.a;
+      ctx.font = `${p.s}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(p.e, 0, 0);
+      ctx.restore();
+      p.x += p.vx; p.y += p.vy; p.r += p.rv;
+      if (p.y > H + 40) Object.assign(p, make(-40));
+    }
+    requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('resize', resize);
+  init();
+  tick();
+})();
+</script>
 </body>
 </html>
