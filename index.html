@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>dokiyolo</title>
+<title>dokiyolo@MacBookPro:~</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Menlo&family=SF+Mono&display=swap');
 
@@ -34,8 +34,13 @@
   }
 
   body {
-    background: var(--bg);
+    background: #1a1a2e;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(72, 49, 157, 0.25) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(29, 78, 137, 0.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, rgba(20, 20, 50, 0.5) 0%, transparent 60%);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
@@ -43,17 +48,29 @@
                  'Droid Sans Mono', 'Source Code Pro', monospace;
     -webkit-font-smoothing: antialiased;
     overflow: hidden;
+    position: relative;
   }
 
   ::selection {
     background: var(--selection);
   }
 
+  /* ===== Desktop Area ===== */
+  .desktop {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* ===== Terminal Window ===== */
   .terminal-wrapper {
     width: 90vw;
     max-width: 860px;
-    height: 85vh;
-    max-height: 620px;
+    height: 80vh;
+    max-height: 580px;
     display: flex;
     flex-direction: column;
     border-radius: 10px;
@@ -63,11 +80,65 @@
       0 22px 70px 4px rgba(0,0,0,0.56),
       0 0 80px rgba(0,0,0,0.3);
     animation: windowAppear 0.5s ease-out;
+    transition: opacity 0.4s cubic-bezier(.4,0,.2,1),
+                width 0.35s cubic-bezier(.4,0,.2,1),
+                height 0.35s cubic-bezier(.4,0,.2,1),
+                max-width 0.35s cubic-bezier(.4,0,.2,1),
+                max-height 0.35s cubic-bezier(.4,0,.2,1),
+                border-radius 0.35s cubic-bezier(.4,0,.2,1);
+    position: absolute;
+    z-index: 10;
+  }
+
+  .terminal-wrapper.dragging {
+    transition: none;
+    user-select: none;
+  }
+
+  .terminal-wrapper.maximized {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 100;
+  }
+
+  .terminal-wrapper.minimizing {
+    transform: scale(0.15) translateY(80vh) !important;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.4s cubic-bezier(.4,0,.2,1), opacity 0.4s cubic-bezier(.4,0,.2,1) !important;
+  }
+
+  .terminal-wrapper.minimized {
+    transform: scale(0.15) translateY(80vh) !important;
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+  }
+
+  .terminal-wrapper.closing {
+    transform: scale(0.8) !important;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.4s cubic-bezier(.4,0,.2,1), opacity 0.4s cubic-bezier(.4,0,.2,1) !important;
+  }
+
+  .terminal-wrapper.closed {
+    display: none;
   }
 
   @keyframes windowAppear {
     from { transform: scale(0.95); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes windowRestore {
+    from { transform: scale(0.15) translateY(80vh); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
   }
 
   .titlebar {
@@ -77,9 +148,13 @@
     align-items: center;
     padding: 0 14px;
     position: relative;
-    -webkit-app-region: drag;
     border-bottom: 1px solid rgba(0,0,0,0.3);
     flex-shrink: 0;
+    cursor: grab;
+  }
+
+  .titlebar:active {
+    cursor: grabbing;
   }
 
   .titlebar-dots {
@@ -171,14 +246,8 @@
     scrollbar-color: rgba(255,255,255,0.1) transparent;
   }
 
-  .terminal-body::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .terminal-body::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
+  .terminal-body::-webkit-scrollbar { width: 6px; }
+  .terminal-body::-webkit-scrollbar-track { background: transparent; }
   .terminal-body::-webkit-scrollbar-thumb {
     background: rgba(255,255,255,0.1);
     border-radius: 3px;
@@ -196,9 +265,7 @@
     flex-wrap: wrap;
   }
 
-  .prompt-user {
-    color: var(--prompt-user);
-  }
+  .prompt-user { color: var(--prompt-user); }
 
   .prompt-separator {
     display: inline-flex;
@@ -217,7 +284,7 @@
   .prompt-dir-bg {
     background: var(--prompt-arrow-bg);
     color: var(--prompt-arrow-fg);
-    padding: 0 8px 0 8px;
+    padding: 0 8px;
     font-size: 13px;
     font-weight: 600;
     height: 20px;
@@ -227,8 +294,7 @@
   }
 
   .prompt-dir-arrow {
-    width: 0;
-    height: 0;
+    width: 0; height: 0;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
     border-left: 10px solid var(--prompt-arrow-bg);
@@ -252,10 +318,8 @@
 
   #command-input {
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
     background: transparent;
     border: none;
     outline: none;
@@ -275,8 +339,7 @@
 
   .cursor-blink {
     display: inline-block;
-    width: 8px;
-    height: 17px;
+    width: 8px; height: 17px;
     background: var(--cursor-color);
     animation: blink 1s step-end infinite;
     vertical-align: middle;
@@ -308,78 +371,192 @@
     font-size: 12px;
   }
 
-  .table-row {
-    display: flex;
-    gap: 4px;
-  }
-
-  .table-key {
-    color: var(--yellow);
-    min-width: 160px;
-    display: inline-block;
-  }
-
-  .table-value {
-    color: var(--text);
-  }
-
   .link {
     color: var(--blue);
     text-decoration: underline;
     cursor: pointer;
   }
+  .link:hover { color: var(--cyan); }
 
-  .link:hover {
-    color: var(--cyan);
+  /* ===== Dock ===== */
+  .dock-wrapper {
+    position: fixed;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    padding: 0 4px;
   }
 
-  .typing-effect {
-    overflow: hidden;
-    border-right: none;
-    white-space: pre-wrap;
+  .dock {
+    display: flex;
+    align-items: flex-end;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px;
+    padding: 4px 10px 6px 10px;
+    min-height: 68px;
+  }
+
+  .dock-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    margin: 0 6px;
+  }
+
+  .dock-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    transform-origin: center bottom;
+    will-change: transform;
+    transition: transform 0.15s ease-out;
+    user-select: none;
+  }
+
+  .dock-tooltip {
+    position: absolute;
+    top: -36px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    background: rgba(40,40,50,0.92);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 4px 12px;
+    border-radius: 5px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s, transform 0.12s;
+  }
+
+  .dock-item.hovered .dock-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+
+  .dock-indicator {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.55);
+    margin-top: 3px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .dock-item.active .dock-indicator {
+    opacity: 1;
+  }
+
+  .dock-separator {
+    width: 1px;
+    height: 36px;
+    background: rgba(255,255,255,0.15);
+    margin: 0 10px;
+    align-self: center;
+    flex-shrink: 0;
+  }
+
+  @keyframes dockBounce {
+    0%, 100% { transform: translateY(0); }
+    25% { transform: translateY(-20px); }
+    50% { transform: translateY(0); }
+    75% { transform: translateY(-10px); }
   }
 
   @media (max-width: 640px) {
     .terminal-wrapper {
       width: 100vw;
-      height: 100vh;
+      height: calc(100vh - 72px);
       max-width: none;
       max-height: none;
       border-radius: 0;
     }
     .terminal-body { font-size: 12px; padding: 8px 10px; }
     .titlebar { height: 34px; }
+    .dock-icon { width: 40px; height: 40px; font-size: 22px; border-radius: 10px; }
+    .dock { height: 54px; border-radius: 14px; }
   }
 </style>
 </head>
 <body>
 
-<div class="terminal-wrapper">
-  <div class="titlebar">
-    <div class="titlebar-dots">
-      <div class="titlebar-dot red" title="关闭"></div>
-      <div class="titlebar-dot yellow" title="最小化"></div>
-      <div class="titlebar-dot green" title="最大化"></div>
+<div class="desktop" id="desktop">
+  <div class="terminal-wrapper" id="terminal-wrapper">
+    <div class="titlebar" id="titlebar">
+      <div class="titlebar-dots">
+        <div class="titlebar-dot red" id="btn-close" title="关闭"></div>
+        <div class="titlebar-dot yellow" id="btn-minimize" title="最小化"></div>
+        <div class="titlebar-dot green" id="btn-maximize" title="最大化"></div>
+      </div>
+      <span class="titlebar-shortcut">⌥⌘1</span>
+      <span class="titlebar-title">dokiyolo@MacBookPro:~</span>
     </div>
-    <span class="titlebar-shortcut">⌥⌘1</span>
-    <span class="titlebar-title">dokiyolo@MacBookPro:~</span>
+    <div class="terminal-body" id="terminal">
+      <div id="output"></div>
+      <div class="prompt-line" id="prompt-line">
+        <span class="prompt-user">dokiyolo@MacBookPro</span>
+        <span class="prompt-separator">
+          <span class="prompt-dir-wrapper">
+            <span class="prompt-dir-bg" id="prompt-dir">~</span><span class="prompt-dir-arrow"></span>
+          </span>
+        </span>
+        <span class="input-area">
+          <span class="input-mirror">
+            <input type="text" id="command-input" autocomplete="off" autocorrect="off"
+                   autocapitalize="off" spellcheck="false" autofocus>
+            <span class="input-display" id="input-display"></span><span class="cursor-blink" id="cursor"></span>
+          </span>
+        </span>
+      </div>
+    </div>
   </div>
-  <div class="terminal-body" id="terminal">
-    <div id="output"></div>
-    <div class="prompt-line" id="prompt-line">
-      <span class="prompt-user">dokiyolo@MacBookPro</span>
-      <span class="prompt-separator">
-        <span class="prompt-dir-wrapper">
-          <span class="prompt-dir-bg" id="prompt-dir">~</span><span class="prompt-dir-arrow"></span>
-        </span>
-      </span>
-      <span class="input-area">
-        <span class="input-mirror">
-          <input type="text" id="command-input" autocomplete="off" autocorrect="off"
-                 autocapitalize="off" spellcheck="false" autofocus>
-          <span class="input-display" id="input-display"></span><span class="cursor-blink" id="cursor"></span>
-        </span>
-      </span>
+</div>
+
+<div class="dock-wrapper">
+  <div class="dock" id="dock">
+    <div class="dock-item" data-app="finder">
+      <span class="dock-tooltip">Finder</span>
+      <div class="dock-icon" style="background:linear-gradient(135deg,#4fc3f7,#1e88e5);font-size:28px">😊</div>
+      <div class="dock-indicator"></div>
+    </div>
+    <div class="dock-item" data-app="safari">
+      <span class="dock-tooltip">Safari</span>
+      <div class="dock-icon" style="background:linear-gradient(135deg,#42a5f5,#1565c0)">🧭</div>
+      <div class="dock-indicator"></div>
+    </div>
+    <div class="dock-item active" data-app="terminal" id="dock-terminal">
+      <span class="dock-tooltip">终端</span>
+      <div class="dock-icon" style="background:linear-gradient(135deg,#1a1e24,#2c2f38);border:1px solid rgba(255,255,255,0.1)">⬛</div>
+      <div class="dock-indicator"></div>
+    </div>
+    <div class="dock-item" data-app="code">
+      <span class="dock-tooltip">VS Code</span>
+      <div class="dock-icon" style="background:linear-gradient(135deg,#1e88e5,#0d47a1)">💻</div>
+      <div class="dock-indicator"></div>
+    </div>
+    <div class="dock-item" data-app="music">
+      <span class="dock-tooltip">音乐</span>
+      <div class="dock-icon" style="background:linear-gradient(135deg,#ec407a,#ad1457)">🎵</div>
+      <div class="dock-indicator"></div>
+    </div>
+    <div class="dock-separator"></div>
+    <div class="dock-item" data-app="github">
+      <span class="dock-tooltip">GitHub</span>
+      <div class="dock-icon" style="background:linear-gradient(135deg,#333,#111)">🐙</div>
+      <div class="dock-indicator"></div>
     </div>
   </div>
 </div>
@@ -391,6 +568,11 @@ const terminal = document.getElementById('terminal');
 const cursor = document.getElementById('cursor');
 const promptDir = document.getElementById('prompt-dir');
 const inputDisplay = document.getElementById('input-display');
+const terminalWrapper = document.getElementById('terminal-wrapper');
+const btnClose = document.getElementById('btn-close');
+const btnMinimize = document.getElementById('btn-minimize');
+const btnMaximize = document.getElementById('btn-maximize');
+const dockTerminal = document.getElementById('dock-terminal');
 
 function syncInputDisplay() {
   inputDisplay.textContent = input.value;
@@ -401,7 +583,183 @@ input.addEventListener('input', syncInputDisplay);
 let commandHistory = [];
 let historyIndex = -1;
 let currentDir = '~';
+let isMaximized = false;
+let isMinimized = false;
+let isClosed = false;
 
+/* ===== Window Dragging ===== */
+const titlebar = document.getElementById('titlebar');
+const desktop = document.getElementById('desktop');
+let isDragging = false;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+
+function centerWindow() {
+  const rect = terminalWrapper.getBoundingClientRect();
+  const parentRect = desktop.getBoundingClientRect();
+  terminalWrapper.style.left = (parentRect.width - rect.width) / 2 + 'px';
+  terminalWrapper.style.top = (parentRect.height - rect.height) / 2 + 'px';
+}
+
+centerWindow();
+window.addEventListener('resize', () => {
+  if (!isDragging && !isMaximized) centerWindow();
+});
+
+titlebar.addEventListener('mousedown', (e) => {
+  if (e.target.classList.contains('titlebar-dot') || isMaximized) return;
+  isDragging = true;
+  terminalWrapper.classList.add('dragging');
+  const rect = terminalWrapper.getBoundingClientRect();
+  const parentRect = desktop.getBoundingClientRect();
+  dragOffsetX = e.clientX - rect.left + parentRect.left;
+  dragOffsetY = e.clientY - rect.top + parentRect.top;
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  e.preventDefault();
+  const parentRect = desktop.getBoundingClientRect();
+  let newX = e.clientX - dragOffsetX;
+  let newY = e.clientY - dragOffsetY;
+  const maxX = parentRect.width - terminalWrapper.offsetWidth;
+  const maxY = parentRect.height - terminalWrapper.offsetHeight;
+  newX = Math.max(-terminalWrapper.offsetWidth * 0.5, Math.min(newX, maxX + terminalWrapper.offsetWidth * 0.5));
+  newY = Math.max(0, Math.min(newY, maxY + 40));
+  terminalWrapper.style.left = newX + 'px';
+  terminalWrapper.style.top = newY + 'px';
+});
+
+document.addEventListener('mouseup', () => {
+  if (isDragging) {
+    isDragging = false;
+    terminalWrapper.classList.remove('dragging');
+  }
+});
+
+/* ===== Window Controls ===== */
+btnClose.addEventListener('click', () => {
+  terminalWrapper.classList.add('closing');
+  isClosed = true;
+  setTimeout(() => {
+    terminalWrapper.classList.remove('closing');
+    terminalWrapper.classList.add('closed');
+    dockTerminal.classList.remove('active');
+  }, 400);
+});
+
+btnMinimize.addEventListener('click', () => {
+  terminalWrapper.classList.add('minimizing');
+  isMinimized = true;
+  setTimeout(() => {
+    terminalWrapper.classList.remove('minimizing');
+    terminalWrapper.classList.add('minimized');
+  }, 400);
+});
+
+btnMaximize.addEventListener('click', () => {
+  if (isMaximized) {
+    terminalWrapper.classList.remove('maximized');
+    isMaximized = false;
+    setTimeout(centerWindow, 10);
+  } else {
+    terminalWrapper.classList.add('maximized');
+    isMaximized = true;
+  }
+  input.focus();
+});
+
+dockTerminal.addEventListener('click', () => {
+  if (isClosed) {
+    centerWindow();
+    terminalWrapper.classList.remove('closed');
+    terminalWrapper.style.animation = 'windowAppear 0.4s ease-out';
+    isClosed = false;
+    dockTerminal.classList.add('active');
+    setTimeout(() => { terminalWrapper.style.animation = ''; }, 400);
+    input.focus();
+    return;
+  }
+  if (isMinimized) {
+    centerWindow();
+    terminalWrapper.classList.remove('minimized');
+    terminalWrapper.style.animation = 'windowRestore 0.4s cubic-bezier(.34,1.56,.64,1)';
+    isMinimized = false;
+    setTimeout(() => { terminalWrapper.style.animation = ''; }, 400);
+    input.focus();
+    return;
+  }
+});
+
+document.querySelectorAll('.dock-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const app = item.dataset.app;
+
+    if (app === 'github') {
+      window.open('https://github.com/DokiYoloo', '_blank');
+      return;
+    }
+
+    if (app !== 'terminal') {
+      item.querySelector('.dock-icon').style.animation = 'dockBounce 0.6s cubic-bezier(.34,1.56,.64,1)';
+      setTimeout(() => {
+        item.querySelector('.dock-icon').style.animation = '';
+      }, 600);
+    }
+  });
+});
+
+/* ===== Dock Magnification (Gaussian) ===== */
+const dock = document.getElementById('dock');
+const dockItems = dock.querySelectorAll('.dock-item');
+const BASE_SIZE = 50;
+const MAX_SCALE = 1.5;
+const AFFECT_DISTANCE = 130;
+
+function updateDockMagnification(mouseX) {
+  dockItems.forEach(item => {
+    const icon = item.querySelector('.dock-icon');
+    const rect = item.getBoundingClientRect();
+    const itemCenterX = rect.left + rect.width / 2;
+    const dist = Math.abs(mouseX - itemCenterX);
+
+    if (dist < AFFECT_DISTANCE) {
+      const ratio = 1 - (dist / AFFECT_DISTANCE);
+      const scale = 1 + (MAX_SCALE - 1) * Math.cos((1 - ratio) * Math.PI / 2);
+      const translateY = -(scale - 1) * BASE_SIZE * 0.5;
+      icon.style.transform = `scale(${scale}) translateY(${translateY}px)`;
+      icon.style.transition = 'transform 0.08s ease-out';
+    } else {
+      icon.style.transform = 'scale(1) translateY(0)';
+      icon.style.transition = 'transform 0.15s ease-out';
+    }
+
+    if (dist < rect.width / 2) {
+      item.classList.add('hovered');
+    } else {
+      item.classList.remove('hovered');
+    }
+  });
+}
+
+function resetDockMagnification() {
+  dockItems.forEach(item => {
+    const icon = item.querySelector('.dock-icon');
+    icon.style.transform = 'scale(1) translateY(0)';
+    icon.style.transition = 'transform 0.2s ease-out';
+    item.classList.remove('hovered');
+  });
+}
+
+dock.addEventListener('mousemove', (e) => {
+  updateDockMagnification(e.clientX);
+});
+
+dock.addEventListener('mouseleave', () => {
+  resetDockMagnification();
+});
+
+/* ===== Terminal Logic ===== */
 const ASCII_LOGO = `
   ██████╗  ██████╗ ██╗  ██╗██╗██╗   ██╗ ██████╗ ██╗      ██████╗
   ██╔══██╗██╔═══██╗██║ ██╔╝██║╚██╗ ██╔╝██╔═══██╗██║     ██╔═══██╗
@@ -479,8 +837,6 @@ const FILE_CONTENTS = {
     '',
     '  <span class="color-yellow">📧 Email:</span>     <span class="link" onclick="window.open(\'mailto:dokiyolo@gmail.com\')">dokiyolo@gmail.com</span>',
     '  <span class="color-yellow">🐙 GitHub:</span>    <span class="link" onclick="window.open(\'https://github.com/DokiYoloo\')">github.com/DokiYoloo</span>',
-    // '  <span class="color-yellow">🐦 Twitter:</span>   <span class="link" onclick="window.open(\'https://twitter.com/dokiyolo\')">@dokiyolo</span>',
-    // '  <span class="color-yellow">💼 LinkedIn:</span>  <span class="link" onclick="window.open(\'https://linkedin.com\')">linkedin.com/in/dokiyolo</span>',
     '',
     '  <span class="color-dim">欢迎通过以上方式与我联系，期待与你交流！</span>',
     '',
@@ -513,6 +869,7 @@ const HELP_TEXT = [
   '  <span class="color-yellow">projects</span>       项目经历',
   '  <span class="color-yellow">experience</span>     工作经历',
   '  <span class="color-yellow">contact</span>        联系方式',
+  '  <span class="color-yellow">buy</span>            购买此域名',
   '',
   '  <span class="color-yellow">ls</span>             列出当前目录文件',
   '  <span class="color-yellow">cat &lt;file&gt;</span>     查看文件内容',
@@ -550,7 +907,7 @@ const NEOFETCH = [
 ];
 
 const AVAILABLE_COMMANDS = [
-  'help', 'about', 'skills', 'projects', 'experience', 'contact',
+  'help', 'about', 'skills', 'projects', 'experience', 'contact', 'buy',
   'ls', 'cat', 'cd', 'pwd', 'whoami', 'date', 'echo', 'clear',
   'history', 'neofetch',
 ];
@@ -709,6 +1066,20 @@ function processCommand(raw) {
     case 'neofetch':
       printLines(NEOFETCH, true);
       break;
+    case 'buy':
+      printLines([
+        '',
+        '<span class="color-cyan bold">  ╔══════════════════════════════════════╗</span>',
+        '<span class="color-cyan bold">  ║       购买此域名 / Buy Domain       ║</span>',
+        '<span class="color-cyan bold">  ╚══════════════════════════════════════╝</span>',
+        '',
+        '  <span class="color-yellow">💰 售价:</span>     <span class="color-green bold">¥50,000 RMB</span>',
+        '  <span class="color-yellow">💬 QQ:</span>       <span class="color-white bold">857815116</span>',
+        '',
+        '  <span class="color-dim">如有意购买，请通过 QQ 联系我，备注「域名购买」</span>',
+        '',
+      ], true);
+      break;
     case 'sudo':
       printLines([
         '',
@@ -739,9 +1110,13 @@ function processCommand(raw) {
         '',
       ]);
       setTimeout(() => {
-        document.querySelector('.terminal-wrapper').style.transition = 'all 0.4s ease';
-        document.querySelector('.terminal-wrapper').style.transform = 'scale(0.9)';
-        document.querySelector('.terminal-wrapper').style.opacity = '0';
+        terminalWrapper.classList.add('closing');
+        isClosed = true;
+        setTimeout(() => {
+          terminalWrapper.classList.remove('closing');
+          terminalWrapper.classList.add('closed');
+          dockTerminal.classList.remove('active');
+        }, 400);
       }, 600);
       break;
     default:
@@ -818,7 +1193,7 @@ terminal.addEventListener('click', () => {
 });
 
 document.addEventListener('keydown', () => {
-  input.focus();
+  if (!isClosed && !isMinimized) input.focus();
 });
 
 printLines(WELCOME_MSG);
