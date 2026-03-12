@@ -1,572 +1,828 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>k8ss.com — 域名出售中 ✨</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --pink:        #FFD1DC;
-      --pink-dark:   #FF85A1;
-      --cream:       #FFF9F5;
-      --mint:        #C1FBA4;
-      --mint-deep:   #A8F090;
-      --purple:      #E6D3F7;
-      --purple-deep: #C9A8F5;
-      --purple-dark: #A97DE8;
-      --yellow:      #FFF0A3;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dokiyolo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Menlo&family=SF+Mono&display=swap');
 
-      --radius-md:   24px;
-      --radius-lg:   36px;
-      --radius-xl:   48px;
-      --radius-full: 9999px;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-      --shadow-card: 0 12px 40px rgba(180, 120, 200, 0.2);
-      --shadow-btn:  0 6px 20px rgba(255, 133, 161, 0.4);
+  :root {
+    --bg: #1d2021;
+    --terminal-bg: #1a1e24;
+    --titlebar-bg: #2c2f38;
+    --text: #c5c8c6;
+    --text-dim: #6b7089;
+    --green: #a6e22e;
+    --blue: #56b6c2;
+    --cyan: #56d4dd;
+    --yellow: #e5c07b;
+    --orange: #d19a66;
+    --red: #e06c75;
+    --magenta: #c678dd;
+    --white: #dcdfe4;
+    --prompt-user: #c5c8c6;
+    --prompt-arrow-bg: #3d8fd1;
+    --prompt-arrow-fg: #fff;
+    --cursor-color: #e8913a;
+    --dot-red: #ff5f57;
+    --dot-yellow: #febc2e;
+    --dot-green: #28c840;
+    --selection: rgba(86, 182, 194, 0.25);
+  }
 
-      --ease-bounce: cubic-bezier(0.22, 1, 0.36, 1);
-      --ease-soft:   cubic-bezier(0.4, 0, 0.2, 1);
+  body {
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Menlo', 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono',
+                 'Droid Sans Mono', 'Source Code Pro', monospace;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
 
-      --font-cute:  'Ma Shan Zheng', cursive;
-      --font-round: 'Nunito', sans-serif;
-      --font-light: 'Quicksand', sans-serif;
-    }
+  ::selection {
+    background: var(--selection);
+  }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+  .terminal-wrapper {
+    width: 90vw;
+    max-width: 860px;
+    height: 85vh;
+    max-height: 620px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.3),
+      0 22px 70px 4px rgba(0,0,0,0.56),
+      0 0 80px rgba(0,0,0,0.3);
+    animation: windowAppear 0.5s ease-out;
+  }
 
-    body {
-      font-family: var(--font-round);
-      background: linear-gradient(160deg, var(--cream) 0%, #FEF0FF 55%, #F0F8FF 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
-      color: #5a3d6b;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+  @keyframes windowAppear {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
 
-    /* ── 背景气泡 ── */
-    .bg-blobs {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-    .blob {
-      position: absolute;
-      border-radius: var(--radius-full);
-      filter: blur(80px);
-      opacity: 0.32;
-      animation: blobFloat 14s ease-in-out infinite alternate;
-    }
-    .blob-1 { width: 520px; height: 520px; background: var(--pink);   top: -120px; left: -120px; animation-delay: 0s; }
-    .blob-2 { width: 420px; height: 420px; background: var(--purple); bottom: -80px; right: -80px; animation-delay: -5s; }
-    .blob-3 { width: 300px; height: 300px; background: var(--mint);   top: 50%; left: 40%;        animation-delay: -10s; }
+  .titlebar {
+    background: var(--titlebar-bg);
+    height: 38px;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    position: relative;
+    -webkit-app-region: drag;
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+    flex-shrink: 0;
+  }
 
-    @keyframes blobFloat {
-      from { transform: translate(0, 0) scale(1); }
-      to   { transform: translate(24px, 18px) scale(1.07); }
-    }
+  .titlebar-dots {
+    display: flex;
+    gap: 8px;
+    z-index: 1;
+  }
 
-    /* ── 粒子画布 ── */
-    #particle-canvas {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-    }
+  .titlebar-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: opacity 0.15s;
+  }
 
-    /* ── 主体 ── */
-    .page {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      max-width: 680px;
-      padding: 48px 24px 52px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 28px;
-    }
+  .titlebar-dot.red { background: var(--dot-red); }
+  .titlebar-dot.yellow { background: var(--dot-yellow); }
+  .titlebar-dot.green { background: var(--dot-green); }
 
-    /* ── 欢迎徽章 ── */
-    .welcome-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: linear-gradient(135deg, var(--pink), var(--purple));
-      color: white;
-      font-family: var(--font-round);
-      font-weight: 700;
-      font-size: 0.95rem;
-      padding: 7px 20px;
-      border-radius: var(--radius-full);
-      box-shadow: 0 4px 16px rgba(255, 133, 161, 0.3);
-      animation: popIn 0.6s var(--ease-bounce) both;
-      letter-spacing: 0.03em;
-    }
+  .titlebar-dot:hover { opacity: 0.8; }
 
-    /* ── 浮动装饰 ── */
-    .floaters {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 2;
-    }
-    .floater {
-      position: absolute;
-      animation: floatY 5s ease-in-out infinite alternate;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
-    }
-    .floater:nth-child(1) { font-size: 2.6rem; top: 6%;  left: 4%;  animation-delay: 0s; }
-    .floater:nth-child(2) { font-size: 2.2rem; top: 8%;  right: 5%; animation-delay: -1.8s; }
-    .floater:nth-child(3) { font-size: 1.8rem; bottom: 12%; left: 5%; animation-delay: -3.2s; }
-    .floater:nth-child(4) { font-size: 2rem;   bottom: 10%; right: 4%; animation-delay: -4.5s; }
+  .titlebar-dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    display: none;
+  }
 
-    @keyframes floatY {
-      from { transform: translateY(0) rotate(-4deg); }
-      to   { transform: translateY(-16px) rotate(4deg); }
-    }
+  .titlebar:hover .titlebar-dot.red::after {
+    content: '×';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    color: rgba(0,0,0,0.6);
+    line-height: 1;
+  }
 
-    /* ── 域名大标题区 ── */
-    .hero {
-      text-align: center;
-      animation: fadeSlideUp 0.7s var(--ease-bounce) 0.1s both;
-    }
+  .titlebar:hover .titlebar-dot.yellow::after {
+    content: '−';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    color: rgba(0,0,0,0.6);
+    line-height: 1;
+  }
 
-    .domain-name {
-      display: inline-block;
-      font-family: var(--font-round);
-      font-size: clamp(4rem, 16vw, 7.5rem);
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #FF85A1 0%, #A97DE8 50%, #5BC8FA 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 4px 18px rgba(169, 125, 232, 0.3));
-      line-height: 1;
-    }
-    .domain-underline {
-      height: 5px;
-      border-radius: var(--radius-full);
-      background: linear-gradient(90deg, #FFB3C6, #C9A8F5, #A8F090);
-      margin-top: 6px;
-      animation: scaleIn 0.6s var(--ease-bounce) 0.8s both;
-    }
+  .titlebar:hover .titlebar-dot.green::after {
+    content: '+';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: rgba(0,0,0,0.6);
+    line-height: 1;
+  }
 
-    .hero-sub {
-      margin-top: 14px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-    }
-    .tag {
-      display: inline-block;
-      padding: 4px 14px;
-      border-radius: var(--radius-full);
-      font-family: var(--font-light);
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-    }
-    .tag-pink   { background: rgba(255,209,220,0.7); color: #c05070; }
-    .tag-mint   { background: rgba(193,251,164,0.7); color: #2d7a3a; }
-    .tag-purple { background: rgba(230,211,247,0.7); color: #7b4fa0; }
-    .tag-blue   { background: rgba(200,235,255,0.7); color: #2d6ea0; }
+  .titlebar-shortcut {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-left: 14px;
+  }
 
-    /* ── 主卡片（价格 + 联系） ── */
-    .main-card {
-      width: 100%;
-      background: rgba(255,255,255,0.55);
-      backdrop-filter: blur(18px) saturate(1.6);
-      -webkit-backdrop-filter: blur(18px) saturate(1.6);
-      border: 2px solid rgba(255,255,255,0.75);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,0.8);
-      padding: 36px 32px 32px;
-      display: grid;
-      grid-template-columns: 1fr 1px 1fr;
-      gap: 0 28px;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-      animation: fadeSlideUp 0.8s var(--ease-bounce) 0.35s both;
-      transition: transform 0.3s var(--ease-bounce), box-shadow 0.3s var(--ease-soft);
-    }
-    .main-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 60px rgba(180, 120, 200, 0.26);
-    }
-    .main-card::before {
-      content: '';
-      position: absolute;
-      top: -50px; right: -50px;
-      width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(255,209,220,0.5), transparent 70%);
-      border-radius: var(--radius-full);
-      pointer-events: none;
-    }
-    .main-card::after {
-      content: '';
-      position: absolute;
-      bottom: -40px; left: -40px;
-      width: 180px; height: 180px;
-      background: radial-gradient(circle, rgba(230,211,247,0.45), transparent 70%);
-      border-radius: var(--radius-full);
-      pointer-events: none;
-    }
+  .titlebar-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
 
-    /* 竖分隔线 */
-    .card-divider {
-      width: 1px;
-      height: 120px;
-      background: linear-gradient(to bottom, transparent, rgba(201,168,245,0.4), transparent);
-      align-self: center;
-    }
+  .terminal-body {
+    background: var(--terminal-bg);
+    flex: 1;
+    padding: 12px 16px;
+    overflow-y: auto;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--text);
+    cursor: text;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
 
-    /* 价格侧 */
-    .price-side {
-      text-align: center;
-      position: relative;
-      z-index: 1;
-    }
-    .price-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--mint), var(--mint-deep));
-      color: #2d7a3a;
-      font-family: var(--font-round);
-      font-size: 0.75rem;
-      font-weight: 800;
-      padding: 4px 14px;
-      border-radius: var(--radius-full);
-      margin-bottom: 10px;
-      box-shadow: 0 3px 10px rgba(161,240,144,0.45);
-    }
-    .price-label {
-      font-family: var(--font-cute);
-      font-size: 1rem;
-      color: #9b72bc;
-      margin-bottom: 6px;
-    }
-    .price-amount {
-      font-family: var(--font-round);
-      font-size: clamp(2.4rem, 8vw, 3.6rem);
-      font-weight: 900;
-      background: linear-gradient(135deg, #FF85A1, #C9A8F5);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.1;
-      filter: drop-shadow(0 2px 8px rgba(201,168,245,0.35));
-    }
-    .price-note {
-      font-family: var(--font-light);
-      font-size: 0.78rem;
-      color: #b08ccc;
-      margin-top: 10px;
-      line-height: 1.5;
-    }
+  .terminal-body::-webkit-scrollbar {
+    width: 6px;
+  }
 
-    /* 联系侧 */
-    .contact-side {
-      text-align: center;
-      position: relative;
-      z-index: 1;
-    }
-    .contact-label {
-      font-family: var(--font-cute);
-      font-size: 1rem;
-      color: #9b72bc;
-      margin-bottom: 12px;
-    }
-    .qr-placeholder {
-      width: 120px;
-      height: 120px;
-      border-radius: var(--radius-md);
-      background: linear-gradient(135deg, rgba(255,209,220,0.6), rgba(230,211,247,0.6));
-      border: 2px dashed rgba(201,168,245,0.65);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      color: #b08ccc;
-      font-family: var(--font-round);
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin: 0 auto 12px;
-      position: relative;
-      overflow: hidden;
-    }
-    .qr-placeholder::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        45deg, transparent, transparent 7px,
-        rgba(255,255,255,0.28) 7px, rgba(255,255,255,0.28) 8px
-      );
-    }
-    .qr-icon { font-size: 2.2rem; position: relative; z-index: 1; }
-    .qr-text { position: relative; z-index: 1; line-height: 1.4; }
-    .contact-hint {
-      font-family: var(--font-light);
-      font-size: 0.78rem;
-      color: #b08ccc;
-      font-weight: 500;
-    }
-    .contact-funny {
-      margin-top: 10px;
-      font-family: var(--font-cute);
-      font-size: 0.92rem;
-      color: #c266a0;
-      line-height: 1.7;
-    }
-    .contact-tip {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      margin-top: 8px;
-      padding: 5px 12px;
-      background: rgba(255, 240, 163, 0.55);
-      border: 1.5px dashed rgba(220, 180, 60, 0.5);
-      border-radius: var(--radius-full);
-      font-family: var(--font-light);
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #a07820;
-      letter-spacing: 0.02em;
-    }
+  .terminal-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
 
-    /* ── 按钮 ── */
-    .btn-buy {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 13px 32px;
-      background: linear-gradient(135deg, #FF85A1, #C9A8F5);
-      color: white;
-      font-family: var(--font-round);
-      font-weight: 800;
-      font-size: 1rem;
-      border: none;
-      border-radius: var(--radius-full);
-      cursor: pointer;
-      box-shadow: var(--shadow-btn);
-      text-decoration: none;
-      animation: fadeSlideUp 0.7s var(--ease-bounce) 0.6s both;
-      transition: transform 0.25s var(--ease-bounce), box-shadow 0.25s var(--ease-soft);
-    }
-    .btn-buy:hover  { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 28px rgba(255,133,161,0.5); }
-    .btn-buy:active { transform: translateY(0) scale(0.97); }
+  .terminal-body::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+  }
 
-    /* ── 流程小标签 ── */
-    .process-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      animation: fadeSlideUp 0.6s var(--ease-bounce) 0.75s both;
-    }
-    .ps {
-      background: rgba(255,255,255,0.65);
-      border: 1.5px solid rgba(201,168,245,0.4);
-      border-radius: var(--radius-full);
-      padding: 5px 14px;
-      font-family: var(--font-round);
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #8a5daa;
-      white-space: nowrap;
-    }
-    .pa { font-size: 1rem; color: #c9a8f5; }
+  .output-line {
+    white-space: pre-wrap;
+    word-break: break-all;
+    min-height: 1.55em;
+  }
 
-    /* ── 底部版权 ── */
-    footer {
-      font-family: var(--font-light);
-      font-size: 0.78rem;
-      color: #c4a8da;
-      font-weight: 500;
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      padding-bottom: 8px;
-      animation: fadeSlideUp 0.5s var(--ease-bounce) 0.9s both;
-    }
+  .prompt-line {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
 
-    /* ── 通用动画 ── */
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(26px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.7); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-    @keyframes scaleIn {
-      from { opacity: 0; transform: scaleX(0); }
-      to   { opacity: 1; transform: scaleX(1); }
-    }
+  .prompt-user {
+    color: var(--prompt-user);
+  }
 
-    /* ── 响应式 ── */
-    @media (max-width: 560px) {
-      .main-card {
-        grid-template-columns: 1fr;
-        gap: 24px 0;
-        padding: 28px 22px;
-      }
-      .card-divider {
-        width: 80px; height: 1px;
-        background: linear-gradient(to right, transparent, rgba(201,168,245,0.4), transparent);
-        justify-self: center;
-      }
-      .floater:nth-child(3),
-      .floater:nth-child(4) { display: none; }
-      .page { padding: 40px 16px 44px; gap: 22px; }
+  .prompt-separator {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 2px;
+    position: relative;
+  }
+
+  .prompt-dir-wrapper {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    height: 20px;
+  }
+
+  .prompt-dir-bg {
+    background: var(--prompt-arrow-bg);
+    color: var(--prompt-arrow-fg);
+    padding: 0 8px 0 8px;
+    font-size: 13px;
+    font-weight: 600;
+    height: 20px;
+    line-height: 20px;
+    display: inline-block;
+    position: relative;
+  }
+
+  .prompt-dir-arrow {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid var(--prompt-arrow-bg);
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .input-area {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    flex: 1;
+    position: relative;
+  }
+
+  .input-mirror {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  #command-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    caret-color: transparent;
+    z-index: 2;
+  }
+
+  .input-display {
+    color: var(--text);
+    white-space: pre;
+    pointer-events: none;
+    min-height: 1.55em;
+  }
+
+  .cursor-blink {
+    display: inline-block;
+    width: 8px;
+    height: 17px;
+    background: var(--cursor-color);
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+    flex-shrink: 0;
+    position: relative;
+    top: 1px;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .color-green { color: var(--green); }
+  .color-blue { color: var(--blue); }
+  .color-cyan { color: var(--cyan); }
+  .color-yellow { color: var(--yellow); }
+  .color-orange { color: var(--orange); }
+  .color-red { color: var(--red); }
+  .color-magenta { color: var(--magenta); }
+  .color-white { color: var(--white); }
+  .color-dim { color: var(--text-dim); }
+  .bold { font-weight: bold; }
+  .underline { text-decoration: underline; }
+
+  .ascii-art {
+    color: var(--cyan);
+    line-height: 1.2;
+    font-size: 12px;
+  }
+
+  .table-row {
+    display: flex;
+    gap: 4px;
+  }
+
+  .table-key {
+    color: var(--yellow);
+    min-width: 160px;
+    display: inline-block;
+  }
+
+  .table-value {
+    color: var(--text);
+  }
+
+  .link {
+    color: var(--blue);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .link:hover {
+    color: var(--cyan);
+  }
+
+  .typing-effect {
+    overflow: hidden;
+    border-right: none;
+    white-space: pre-wrap;
+  }
+
+  @media (max-width: 640px) {
+    .terminal-wrapper {
+      width: 100vw;
+      height: 100vh;
+      max-width: none;
+      max-height: none;
+      border-radius: 0;
     }
-    @media (max-width: 380px) {
-      .process-row { flex-direction: column; }
-      .pa { transform: rotate(90deg); display: inline-block; }
-    }
-  </style>
+    .terminal-body { font-size: 12px; padding: 8px 10px; }
+    .titlebar { height: 34px; }
+  }
+</style>
 </head>
 <body>
 
-<div class="bg-blobs" aria-hidden="true">
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-  <div class="blob blob-3"></div>
+<div class="terminal-wrapper">
+  <div class="titlebar">
+    <div class="titlebar-dots">
+      <div class="titlebar-dot red" title="关闭"></div>
+      <div class="titlebar-dot yellow" title="最小化"></div>
+      <div class="titlebar-dot green" title="最大化"></div>
+    </div>
+    <span class="titlebar-shortcut">⌥⌘1</span>
+    <span class="titlebar-title">dokiyolo@MacBookPro:~</span>
+  </div>
+  <div class="terminal-body" id="terminal">
+    <div id="output"></div>
+    <div class="prompt-line" id="prompt-line">
+      <span class="prompt-user">dokiyolo@MacBookPro</span>
+      <span class="prompt-separator">
+        <span class="prompt-dir-wrapper">
+          <span class="prompt-dir-bg" id="prompt-dir">~</span><span class="prompt-dir-arrow"></span>
+        </span>
+      </span>
+      <span class="input-area">
+        <span class="input-mirror">
+          <input type="text" id="command-input" autocomplete="off" autocorrect="off"
+                 autocapitalize="off" spellcheck="false" autofocus>
+          <span class="input-display" id="input-display"></span><span class="cursor-blink" id="cursor"></span>
+        </span>
+      </span>
+    </div>
+  </div>
 </div>
-<canvas id="particle-canvas" aria-hidden="true"></canvas>
 
-<div class="floaters" aria-hidden="true">
-  <span class="floater">☁️</span>
-  <span class="floater">🐻</span>
-  <span class="floater">🌸</span>
-  <span class="floater">⭐</span>
-</div>
-
-<main class="page">
-
-  <!-- 欢迎徽章 -->
-  <div class="welcome-badge">酱酱~ 有缘人请进 ✨</div>
-
-  <!-- 域名展示 -->
-  <div class="hero">
-    <div class="domain-name">k8ss.com</div>
-    <div class="domain-underline"></div>
-    <div class="hero-sub">
-      <span class="tag tag-pink">🧠 极简易记</span>
-      <span class="tag tag-mint">⚡ 技术感强</span>
-      <span class="tag tag-purple">💎 稀缺短域</span>
-      <span class="tag tag-blue">☸️ Kubernetes 品牌首选</span>
-    </div>
-  </div>
-
-  <!-- 主卡片：价格 + 联系 -->
-  <div class="main-card">
-
-    <div class="price-side">
-      <div class="price-badge">🔥 诚意出售</div>
-      <p class="price-label">💰 出售价格</p>
-      <div class="price-amount">¥50,000</div>
-      <p class="price-note">支持阿里云 / 腾讯云过户<br/>交易安全有保障 🛡️</p>
-    </div>
-
-    <div class="card-divider" aria-hidden="true"></div>
-
-    <div class="contact-side">
-      <p class="contact-label">💌 扫码联系卖家</p>
-      <div class="qr-placeholder" role="img" aria-label="占位符">
-        <span class="qr-icon">🫙</span>
-        <span class="qr-text">二维码<br/>摆烂中</span>
-      </div>
-      <p class="contact-funny">诶~不对呀 我没有微信<br/>我只有 🐧 QQ！</p>
-      <p class="contact-tip">🔍 TIP: 查看网页源代码可获取</p>
-    </div>
-
-  </div>
-
-  <!-- 交易流程 -->
-  <div class="process-row" aria-label="交易流程">
-    <span class="ps">确认意向</span>
-    <span class="pa" aria-hidden="true">→</span>
-    <span class="ps">支付钱款</span>
-    <span class="pa" aria-hidden="true">→</span>
-    <span class="ps">平台过户</span>
-  </div>
-
-</main>
-
-<footer>© 2026 k8ss.com 域名出售 &nbsp;|&nbsp; 本页面仅为展示用途</footer>
-
-<!--
-  ────────────────────────────────────────────
-  👀 哇，你真的看源代码了！有眼光～
-  🐧 卖家 857815116
-  （请备注「k8ss.com 域名购买」）
-  ────────────────────────────────────────────
--->
 <script>
-(function () {
-  const canvas = document.getElementById('particle-canvas');
-  const ctx = canvas.getContext('2d');
-  const EMOJIS = ['❤️', '🌸', '⭐', '✨', '🫧', '🌷', '💜', '🍬'];
-  const COUNT = 22;
-  let W = 0, H = 0, particles = [];
+const input = document.getElementById('command-input');
+const output = document.getElementById('output');
+const terminal = document.getElementById('terminal');
+const cursor = document.getElementById('cursor');
+const promptDir = document.getElementById('prompt-dir');
+const inputDisplay = document.getElementById('input-display');
 
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+function syncInputDisplay() {
+  inputDisplay.textContent = input.value;
+}
+
+input.addEventListener('input', syncInputDisplay);
+
+let commandHistory = [];
+let historyIndex = -1;
+let currentDir = '~';
+
+const ASCII_LOGO = `
+  ██████╗  ██████╗ ██╗  ██╗██╗██╗   ██╗ ██████╗ ██╗      ██████╗
+  ██╔══██╗██╔═══██╗██║ ██╔╝██║╚██╗ ██╔╝██╔═══██╗██║     ██╔═══██╗
+  ██║  ██║██║   ██║█████╔╝ ██║ ╚████╔╝ ██║   ██║██║     ██║   ██║
+  ██║  ██║██║   ██║██╔═██╗ ██║  ╚██╔╝  ██║   ██║██║     ██║   ██║
+  ██████╔╝╚██████╔╝██║  ██╗██║   ██║   ╚██████╔╝███████╗╚██████╔╝
+  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝ ╚══════╝ ╚═════╝`;
+
+const now = new Date();
+const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const loginTime = `${days[now.getDay()]} ${months[now.getMonth()]} ${String(now.getDate()).padStart(2,' ')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+
+const WELCOME_MSG = [
+  `Last login: ${loginTime} on ttys000`,
+  '',
+  `<span class="ascii-art">${ASCII_LOGO}</span>`,
+  '',
+  '<span class="color-green bold">  欢迎来到 dokiyolo 的个人主页!</span>',
+  '  输入 <span class="color-yellow">help</span> 查看可用命令',
+  '',
+];
+
+const FILE_SYSTEM = {
+  '~': ['about.txt', 'skills.txt', 'projects/', 'contact.txt', 'experience.txt'],
+  '~/projects': ['project-1.md'],
+};
+
+const FILE_CONTENTS = {
+  'about.txt': [
+    '',
+    '<span class="color-cyan bold">  ╔══════════════════════════════════════╗</span>',
+    '<span class="color-cyan bold">  ║          关于我 / About Me          ║</span>',
+    '<span class="color-cyan bold">  ╚══════════════════════════════════════╝</span>',
+    '',
+    '  <span class="color-yellow">姓名:</span>       dokiyolo',
+    '  <span class="color-yellow">角色:</span>       全栈开发工程师 / Full-Stack Developer',
+    '  <span class="color-yellow">坐标:</span>       中国',
+    '  <span class="color-yellow">状态:</span>       <span class="color-green">● 在线</span> — 正在当牛马',
+    '',
+    '  热爱技术，专注于构建优雅、高性能的 Web 应用。',
+    '  相信好的代码就像好的文章——简洁、清晰、有力。',
+    '',
+  ],
+  'skills.txt': [
+    '',
+    '<span class="color-cyan bold">  ╔══════════════════════════════════════╗</span>',
+    '<span class="color-cyan bold">  ║        技术栈 / Tech Stack          ║</span>',
+    '<span class="color-cyan bold">  ╚══════════════════════════════════════╝</span>',
+    '',
+    '  <span class="color-green">前端 Frontend</span>',
+    '  ├── JavaScript / TypeScript    ████████████████████ 95%',
+    '  ├── React / Next.js            ███████████████████░ 90%',
+    '  ├── Vue / Nuxt.js              ███████████████░░░░░ 70%',
+    '  ├── HTML5 / CSS3               ████████████████████ 95%',
+    '  └── Less / Sass                ███████████████████░ 90%',
+    '',
+    '  <span class="color-blue">后端 Backend</span>',
+    '  ├── Java / Spring Boot          ██████████████████░░ 85%',
+    '  ├── Python / FastAPI            ████████████████░░░░ 80%',
+    '  └── MySQL / Redis               ██████████████████░░ 85%',
+    '',
+    '  <span class="color-magenta">工具 DevOps</span>',
+    '  ├── Docker / K8s               ████████████████░░░░ 80%',
+    '  ├── Git / GitHub Actions       ███████████████████░ 90%',
+    '  ├── Jenkins / GitLab CI        ███████████████████░ 90%',
+    '  └── Linux / Shell              ██████████████████░░ 85%',
+    '',
+  ],
+  'contact.txt': [
+    '',
+    '<span class="color-cyan bold">  ╔══════════════════════════════════════╗</span>',
+    '<span class="color-cyan bold">  ║       联系方式 / Contact            ║</span>',
+    '<span class="color-cyan bold">  ╚══════════════════════════════════════╝</span>',
+    '',
+    '  <span class="color-yellow">📧 Email:</span>     <span class="link" onclick="window.open(\'mailto:dokiyolo@gmail.com\')">dokiyolo@gmail.com</span>',
+    '  <span class="color-yellow">🐙 GitHub:</span>    <span class="link" onclick="window.open(\'https://github.com/DokiYoloo\')">github.com/DokiYoloo</span>',
+    // '  <span class="color-yellow">🐦 Twitter:</span>   <span class="link" onclick="window.open(\'https://twitter.com/dokiyolo\')">@dokiyolo</span>',
+    // '  <span class="color-yellow">💼 LinkedIn:</span>  <span class="link" onclick="window.open(\'https://linkedin.com\')">linkedin.com/in/dokiyolo</span>',
+    '',
+    '  <span class="color-dim">欢迎通过以上方式与我联系，期待与你交流！</span>',
+    '',
+  ],
+  'experience.txt': [
+    '',
+    '<span class="color-cyan bold">  ╔══════════════════════════════════════╗</span>',
+    '<span class="color-cyan bold">  ║       工作经历 / Experience         ║</span>',
+    '<span class="color-cyan bold">  ╚══════════════════════════════════════╝</span>',
+    '',
+    '  <span class="color-green">2018 - 至今</span>    <span class="color-white bold">后端</span>  工作经验8年',
+    '',
+  ],
+  'project-1.md': [
+    '',
+    '  <span class="color-yellow bold">📦 项目一: 构思中</span>',
+    '',
+    '  <span class="color-dim">描述:</span>  一个完整的关系网，完全拟人的智能体世界',
+    '',
+  ],
+};
+
+const HELP_TEXT = [
+  '',
+  '<span class="color-cyan bold">  可用命令 / Available Commands:</span>',
+  '',
+  '  <span class="color-yellow">help</span>           显示帮助信息',
+  '  <span class="color-yellow">about</span>          关于我',
+  '  <span class="color-yellow">skills</span>         技术栈',
+  '  <span class="color-yellow">projects</span>       项目经历',
+  '  <span class="color-yellow">experience</span>     工作经历',
+  '  <span class="color-yellow">contact</span>        联系方式',
+  '',
+  '  <span class="color-yellow">ls</span>             列出当前目录文件',
+  '  <span class="color-yellow">cat &lt;file&gt;</span>     查看文件内容',
+  '  <span class="color-yellow">cd &lt;dir&gt;</span>      切换目录',
+  '  <span class="color-yellow">pwd</span>            显示当前路径',
+  '  <span class="color-yellow">whoami</span>         我是谁',
+  '  <span class="color-yellow">date</span>           当前日期',
+  '  <span class="color-yellow">echo &lt;text&gt;</span>    输出文本',
+  '  <span class="color-yellow">clear</span>          清屏',
+  '  <span class="color-yellow">history</span>        命令历史',
+  '  <span class="color-yellow">neofetch</span>       系统信息',
+  '',
+  '  <span class="color-dim">提示: 使用 ↑ / ↓ 键浏览历史命令，Tab 自动补全</span>',
+  '',
+];
+
+const NEOFETCH = [
+  '',
+  '<span class="color-green">                    \'c.          </span>  <span class="color-yellow bold">dokiyolo</span>@<span class="color-yellow bold">MacBookPro</span>',
+  '<span class="color-green">                 ,xNMM.          </span>  ─────────────────',
+  '<span class="color-green">               .OMMMMo           </span>  <span class="color-yellow">OS:</span>      macOS Sequoia',
+  '<span class="color-green">               OMMM0,            </span>  <span class="color-yellow">Host:</span>    MacBook Pro',
+  '<span class="color-green">     .;loddo:\' loolloddol;.     </span>  <span class="color-yellow">Kernel:</span>  Darwin 24.0.0',
+  '<span class="color-green">   cKMMMMMMMMMMNWMMMMMMMMMM0:   </span>  <span class="color-yellow">Shell:</span>   zsh 5.9',
+  '<span class="color-green"> .KMMMMMMMMMMMMMMMMMMMMMMMWd.   </span>  <span class="color-yellow">Term:</span>    Web Terminal v1.0',
+  '<span class="color-green"> XMMMMMMMMMMMMMMMMMMMMMMMX.     </span>  <span class="color-yellow">IDE:</span>     VIM',
+  '<span class="color-green">;MMMMMMMMMMMMMMMMMMMMMMMM:      </span>  <span class="color-yellow">Lang:</span>    Java, Python, JavaScript',
+  '<span class="color-green">:MMMMMMMMMMMMMMMMMMMMMMMM:      </span>  <span class="color-yellow">Theme:</span>   One Dark Pro',
+  '<span class="color-green">.MMMMMMMMMMMMMMMMMMMMMMMMX.     </span>  <span class="color-yellow">Font:</span>    Menlo 13.5px',
+  '<span class="color-green"> kMMMMMMMMMMMMMMMMMMMMMMMMWd.   </span>  <span class="color-yellow">Uptime:</span>  ∞',
+  '<span class="color-green"> .XMMMMMMMMMMMMMMMMMMMMMMMMk   </span>  ',
+  '<span class="color-green">  .XMMMMMMMMMMMMMMMMMMMMK.     </span>  <span style="background:#ff5f57;color:#ff5f57">███</span><span style="background:#febc2e;color:#febc2e">███</span><span style="background:#28c840;color:#28c840">███</span><span style="background:#56b6c2;color:#56b6c2">███</span><span style="background:#c678dd;color:#c678dd">███</span><span style="background:#e06c75;color:#e06c75">███</span>',
+  '<span class="color-green">    kMMMMMMMMMMMMMMMMMMd       </span>  ',
+  '',
+];
+
+const AVAILABLE_COMMANDS = [
+  'help', 'about', 'skills', 'projects', 'experience', 'contact',
+  'ls', 'cat', 'cd', 'pwd', 'whoami', 'date', 'echo', 'clear',
+  'history', 'neofetch',
+];
+
+function printLines(lines, animate = false) {
+  if (!animate) {
+    lines.forEach(line => {
+      const div = document.createElement('div');
+      div.className = 'output-line';
+      div.innerHTML = line;
+      output.appendChild(div);
+    });
+    scrollToBottom();
+    return Promise.resolve();
   }
 
-  function make(yStart) {
-    return {
-      x: Math.random() * W,
-      y: yStart ?? (Math.random() * H),
-      e: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
-      s: 11 + Math.random() * 13,
-      vy: 0.35 + Math.random() * 0.55,
-      vx: (Math.random() - 0.5) * 0.45,
-      r: Math.random() * Math.PI * 2,
-      rv: (Math.random() - 0.5) * 0.025,
-      a: 0.45 + Math.random() * 0.5,
-    };
-  }
-
-  function init() { resize(); particles = Array.from({ length: COUNT }, () => make(null)); }
-
-  function tick() {
-    ctx.clearRect(0, 0, W, H);
-    for (const p of particles) {
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.r);
-      ctx.globalAlpha = p.a;
-      ctx.font = `${p.s}px serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(p.e, 0, 0);
-      ctx.restore();
-      p.x += p.vx; p.y += p.vy; p.r += p.rv;
-      if (p.y > H + 40) Object.assign(p, make(-40));
+  return new Promise(resolve => {
+    let i = 0;
+    function next() {
+      if (i >= lines.length) { resolve(); return; }
+      const div = document.createElement('div');
+      div.className = 'output-line';
+      div.innerHTML = lines[i];
+      output.appendChild(div);
+      scrollToBottom();
+      i++;
+      setTimeout(next, 25);
     }
-    requestAnimationFrame(tick);
+    next();
+  });
+}
+
+function printPrompt(cmd) {
+  const div = document.createElement('div');
+  div.className = 'output-line prompt-line';
+  div.innerHTML = `<span class="prompt-user">dokiyolo@MacBookPro</span><span class="prompt-separator"><span class="prompt-dir-wrapper"><span class="prompt-dir-bg">${currentDir}</span><span class="prompt-dir-arrow"></span></span></span><span class="input-area" style="margin-left:6px">${escapeHtml(cmd)}</span>`;
+  output.appendChild(div);
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function scrollToBottom() {
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+function processCommand(raw) {
+  const trimmed = raw.trim();
+  if (!trimmed) return;
+
+  commandHistory.push(trimmed);
+  historyIndex = commandHistory.length;
+
+  printPrompt(trimmed);
+
+  const parts = trimmed.split(/\s+/);
+  const cmd = parts[0].toLowerCase();
+  const args = parts.slice(1);
+
+  switch(cmd) {
+    case 'help':
+      printLines(HELP_TEXT);
+      break;
+    case 'about':
+      printLines(FILE_CONTENTS['about.txt'], true);
+      break;
+    case 'skills':
+      printLines(FILE_CONTENTS['skills.txt'], true);
+      break;
+    case 'projects':
+      printLines([
+        '',
+        ...FILE_CONTENTS['project-1.md'],
+      ], true);
+      break;
+    case 'experience':
+      printLines(FILE_CONTENTS['experience.txt'], true);
+      break;
+    case 'contact':
+      printLines(FILE_CONTENTS['contact.txt'], true);
+      break;
+    case 'clear':
+      output.innerHTML = '';
+      break;
+    case 'ls': {
+      const dir = currentDir;
+      const files = FILE_SYSTEM[dir];
+      if (files) {
+        const formatted = files.map(f => {
+          if (f.endsWith('/')) return `<span class="color-blue bold">${f}</span>`;
+          if (f.endsWith('.md')) return `<span class="color-green">${f}</span>`;
+          return `<span class="color-white">${f}</span>`;
+        });
+        printLines(['', '  ' + formatted.join('    '), '']);
+      } else {
+        printLines([`ls: cannot access '${dir}': 目录为空`]);
+      }
+      break;
+    }
+    case 'cd': {
+      const target = (args[0] || '').replace(/\/+$/, '');
+      if (!target || target === '~' || target === '') {
+        currentDir = '~';
+      } else if (target === '..' || target === '../') {
+        if (currentDir !== '~') {
+          const parts = currentDir.split('/');
+          parts.pop();
+          currentDir = parts.join('/') || '~';
+        }
+      } else if (target === 'projects' || target === '~/projects' || target === './projects') {
+        currentDir = '~/projects';
+      } else {
+        printLines([`<span class="color-red">cd: no such file or directory: ${escapeHtml(target)}</span>`]);
+        break;
+      }
+      promptDir.textContent = currentDir;
+      break;
+    }
+    case 'pwd':
+      printLines([`/Users/dokiyolo${currentDir === '~' ? '' : currentDir.replace('~', '')}`]);
+      break;
+    case 'cat': {
+      const filename = args[0];
+      if (!filename) {
+        printLines([`<span class="color-red">cat: 请指定文件名。用法: cat &lt;filename&gt;</span>`]);
+        break;
+      }
+      let resolved = filename;
+      if (currentDir === '~/projects' && !filename.includes('/')) {
+        resolved = filename;
+      }
+      if (FILE_CONTENTS[resolved]) {
+        printLines(FILE_CONTENTS[resolved], true);
+      } else {
+        printLines([`<span class="color-red">cat: ${escapeHtml(filename)}: No such file or directory</span>`]);
+      }
+      break;
+    }
+    case 'whoami':
+      printLines(['dokiyolo']);
+      break;
+    case 'date':
+      printLines([new Date().toString()]);
+      break;
+    case 'echo':
+      printLines([args.join(' ')]);
+      break;
+    case 'history':
+      printLines(['', ...commandHistory.map((c, i) =>
+        `  <span class="color-dim">${String(i + 1).padStart(4)}</span>  ${escapeHtml(c)}`
+      ), '']);
+      break;
+    case 'neofetch':
+      printLines(NEOFETCH, true);
+      break;
+    case 'sudo':
+      printLines([
+        '',
+        '<span class="color-red">  ⚠ Permission denied: 不好意思，这里没有 root 权限 😄</span>',
+        '',
+      ]);
+      break;
+    case 'rm':
+      printLines([
+        '',
+        '<span class="color-red">  ⚠ 危险操作已拦截！这可不是真正的终端哦~</span>',
+        '',
+      ]);
+      break;
+    case 'vim':
+    case 'vi':
+    case 'nano':
+      printLines([
+        '',
+        `<span class="color-yellow">  目前不支持 nano 编辑器哦 :)</span>`,
+        '',
+      ]);
+      break;
+    case 'exit':
+      printLines([
+        '',
+        '<span class="color-dim">  再见！感谢你的访问~ 👋</span>',
+        '',
+      ]);
+      setTimeout(() => {
+        document.querySelector('.terminal-wrapper').style.transition = 'all 0.4s ease';
+        document.querySelector('.terminal-wrapper').style.transform = 'scale(0.9)';
+        document.querySelector('.terminal-wrapper').style.opacity = '0';
+      }, 600);
+      break;
+    default:
+      printLines([`<span class="color-red">zsh: command not found: ${escapeHtml(cmd)}</span>`,
+                   `<span class="color-dim">输入 <span class="color-yellow">help</span> 查看可用命令</span>`]);
   }
 
-  window.addEventListener('resize', resize);
-  init();
-  tick();
-})();
+  scrollToBottom();
+}
+
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const val = input.value;
+    input.value = '';
+    syncInputDisplay();
+    processCommand(val);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (historyIndex > 0) {
+      historyIndex--;
+      input.value = commandHistory[historyIndex] || '';
+      syncInputDisplay();
+    }
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (historyIndex < commandHistory.length - 1) {
+      historyIndex++;
+      input.value = commandHistory[historyIndex] || '';
+    } else {
+      historyIndex = commandHistory.length;
+      input.value = '';
+    }
+    syncInputDisplay();
+  } else if (e.key === 'Tab') {
+    e.preventDefault();
+    const val = input.value.trim();
+    if (!val) return;
+
+    const parts = val.split(/\s+/);
+    const lastPart = parts[parts.length - 1];
+
+    if (parts.length === 1) {
+      const matches = AVAILABLE_COMMANDS.filter(c => c.startsWith(lastPart));
+      if (matches.length === 1) {
+        input.value = matches[0];
+        syncInputDisplay();
+      } else if (matches.length > 1) {
+        printPrompt(val);
+        printLines(['  ' + matches.map(m => `<span class="color-yellow">${m}</span>`).join('    ')]);
+      }
+    } else if (parts[0] === 'cat' || parts[0] === 'cd') {
+      const dir = currentDir;
+      const files = FILE_SYSTEM[dir] || [];
+      const matches = files.filter(f => f.replace('/', '').startsWith(lastPart));
+      if (matches.length === 1) {
+        parts[parts.length - 1] = matches[0].replace('/', '');
+        input.value = parts.join(' ');
+        syncInputDisplay();
+      } else if (matches.length > 1) {
+        printPrompt(val);
+        printLines(['  ' + matches.map(f =>
+          f.endsWith('/') ? `<span class="color-blue bold">${f}</span>` : `<span class="color-white">${f}</span>`
+        ).join('    ')]);
+      }
+    }
+  } else if (e.key === 'l' && e.ctrlKey) {
+    e.preventDefault();
+    output.innerHTML = '';
+  }
+});
+
+terminal.addEventListener('click', () => {
+  input.focus();
+});
+
+document.addEventListener('keydown', () => {
+  input.focus();
+});
+
+printLines(WELCOME_MSG);
+input.focus();
 </script>
 </body>
 </html>
