@@ -476,6 +476,106 @@
     75% { transform: translateY(-10px); }
   }
 
+  /* ===== rm Crash Effect ===== */
+  .crash-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', sans-serif;
+  }
+
+  .crash-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .crash-overlay .crash-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+  }
+
+  .crash-overlay .crash-title {
+    color: #fff;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .crash-overlay .crash-msg {
+    color: rgba(255,255,255,0.5);
+    font-size: 15px;
+    margin-bottom: 30px;
+  }
+
+  .crash-overlay .crash-btn {
+    background: #3478f6;
+    color: #fff;
+    border: none;
+    padding: 10px 32px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+
+  .crash-overlay .crash-btn:hover {
+    background: #2563eb;
+  }
+
+  .rm-deleting .terminal-body {
+    position: relative;
+    overflow: hidden;
+  }
+
+  @keyframes rmGlitch {
+    0% { transform: translate(0); filter: none; }
+    10% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
+    20% { transform: translate(2px, -1px); filter: hue-rotate(180deg); }
+    30% { transform: translate(-1px, 2px); filter: hue-rotate(270deg) brightness(1.5); }
+    40% { transform: translate(1px, -2px); filter: hue-rotate(45deg); }
+    50% { transform: translate(-2px, 0); filter: hue-rotate(135deg) contrast(1.5); }
+    60% { transform: translate(2px, 1px); filter: hue-rotate(225deg); }
+    70% { transform: translate(0, -1px); filter: hue-rotate(315deg) saturate(2); }
+    80% { transform: translate(-1px, 1px); filter: hue-rotate(60deg); }
+    90% { transform: translate(1px, 0); filter: hue-rotate(150deg) brightness(0.8); }
+    100% { transform: translate(0); filter: none; }
+  }
+
+  @keyframes rmScanline {
+    0% { top: -4px; }
+    100% { top: 100%; }
+  }
+
+  .rm-deleting .terminal-body::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 4px;
+    background: rgba(255,0,0,0.15);
+    box-shadow: 0 0 10px rgba(255,0,0,0.3);
+    animation: rmScanline 0.8s linear infinite;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  .rm-deleting {
+    animation: rmGlitch 0.15s infinite;
+  }
+
+  @keyframes rmFadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; filter: brightness(3) saturate(0); }
+  }
+
   @media (max-width: 640px) {
     .terminal-wrapper {
       width: 100vw;
@@ -525,7 +625,14 @@
   </div>
 </div>
 
-<div class="dock-wrapper">
+<div class="crash-overlay" id="crash-overlay">
+  <div class="crash-icon">💀</div>
+  <div class="crash-title">系统已崩溃</div>
+  <div class="crash-msg">您的文件已被成功删除，电脑即将爆炸 💥</div>
+  <button class="crash-btn" id="crash-reboot">重新启动</button>
+</div>
+
+<div class="dock-wrapper" id="dock-wrapper">
   <div class="dock" id="dock">
     <div class="dock-item" data-app="finder">
       <span class="dock-tooltip">Finder</span>
@@ -1092,11 +1199,7 @@ function processCommand(raw) {
       ]);
       break;
     case 'rm':
-      printLines([
-        '',
-        '<span class="color-red">  ⚠ 危险操作已拦截！这可不是真正的终端哦~</span>',
-        '',
-      ]);
+      triggerRmCrash();
       break;
     case 'vim':
     case 'vi':
@@ -1198,6 +1301,79 @@ terminal.addEventListener('click', () => {
 
 document.addEventListener('keydown', () => {
   if (!isClosed && !isMinimized) input.focus();
+});
+
+/* ===== rm Crash Effect ===== */
+const crashOverlay = document.getElementById('crash-overlay');
+const crashReboot = document.getElementById('crash-reboot');
+const dockWrapperEl = document.querySelector('.dock-wrapper');
+
+const rmMessages = [
+  '<span class="color-red">rm: 正在删除 /System/Library/CoreServices...</span>',
+  '<span class="color-red">rm: 正在删除 /usr/bin/*...</span>',
+  '<span class="color-red">rm: 正在删除 /Users/dokiyolo/Documents/*...</span>',
+  '<span class="color-red">rm: 正在删除 /Applications/*...</span>',
+  '<span class="color-red">rm: 正在删除 /System/Library/Frameworks/*...</span>',
+  '<span class="color-red">rm: 正在删除 /private/var/db/*...</span>',
+  '<span class="color-yellow">WARNING: kernel panic - not syncing: Attempted to kill init!</span>',
+  '<span class="color-yellow">WARNING: CPU#0 stuck for 23s!</span>',
+  '<span class="color-red">rm: 正在删除 /boot/*...</span>',
+  '<span class="color-red">rm: 正在删除 /System/Library/Kernels/*...</span>',
+  '<span class="color-magenta">PANIC: VFS: Unable to mount root fs</span>',
+  '<span class="color-red bold">Segmentation fault (core dumped)</span>',
+  '<span class="color-red bold">FATAL: kernel halted.</span>',
+];
+
+function triggerRmCrash() {
+  printLines(['', '<span class="color-red bold">  ⚠ 正在执行 rm -rf / ...</span>', '']);
+
+  setTimeout(() => {
+    terminalWrapper.classList.add('rm-deleting');
+  }, 300);
+
+  let i = 0;
+  const msgInterval = setInterval(() => {
+    if (i < rmMessages.length) {
+      const div = document.createElement('div');
+      div.className = 'output-line';
+      div.innerHTML = rmMessages[i];
+      output.appendChild(div);
+      scrollToBottom();
+      i++;
+    }
+  }, 350);
+
+  setTimeout(() => {
+    clearInterval(msgInterval);
+    terminalWrapper.style.animation = 'rmFadeOut 0.8s forwards';
+    dockWrapperEl.style.transition = 'opacity 0.8s';
+    dockWrapperEl.style.opacity = '0';
+
+    setTimeout(() => {
+      terminalWrapper.classList.remove('rm-deleting');
+      terminalWrapper.classList.add('closed');
+      terminalWrapper.style.animation = '';
+      terminalWrapper.style.opacity = '';
+      terminalWrapper.style.filter = '';
+      crashOverlay.classList.add('active');
+    }, 800);
+  }, 5000);
+}
+
+crashReboot.addEventListener('click', () => {
+  crashOverlay.classList.remove('active');
+  dockWrapperEl.style.opacity = '1';
+  output.innerHTML = '';
+  terminalWrapper.classList.remove('closed');
+  isClosed = false;
+  dockTerminal.classList.add('active');
+  requestAnimationFrame(() => {
+    centerWindow();
+    terminalWrapper.style.animation = 'windowAppear 0.5s ease-out';
+    setTimeout(() => { terminalWrapper.style.animation = ''; }, 500);
+  });
+  printLines(WELCOME_MSG);
+  input.focus();
 });
 
 printLines(WELCOME_MSG);
