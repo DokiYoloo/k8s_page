@@ -671,21 +671,25 @@ btnMaximize.addEventListener('click', () => {
 
 dockTerminal.addEventListener('click', () => {
   if (isClosed) {
-    centerWindow();
     terminalWrapper.classList.remove('closed');
-    terminalWrapper.style.animation = 'windowAppear 0.4s ease-out';
     isClosed = false;
     dockTerminal.classList.add('active');
-    setTimeout(() => { terminalWrapper.style.animation = ''; }, 400);
+    requestAnimationFrame(() => {
+      centerWindow();
+      terminalWrapper.style.animation = 'windowAppear 0.4s ease-out';
+      setTimeout(() => { terminalWrapper.style.animation = ''; }, 400);
+    });
     input.focus();
     return;
   }
   if (isMinimized) {
-    centerWindow();
     terminalWrapper.classList.remove('minimized');
-    terminalWrapper.style.animation = 'windowRestore 0.4s cubic-bezier(.34,1.56,.64,1)';
     isMinimized = false;
-    setTimeout(() => { terminalWrapper.style.animation = ''; }, 400);
+    requestAnimationFrame(() => {
+      centerWindow();
+      terminalWrapper.style.animation = 'windowRestore 0.4s cubic-bezier(.34,1.56,.64,1)';
+      setTimeout(() => { terminalWrapper.style.animation = ''; }, 400);
+    });
     input.focus();
     return;
   }
