@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 基础 SEO -->
+  <title>在线提词器 — 镜像·速度·全屏·无干扰</title>
+  <meta name="description" content="免费在线提词器，支持镜像翻转、滚动速度调节、字号调整、聚焦带、亮暗色主题、全屏及无干扰模式，适配 PC 与移动端，无需安装即用。">
+  <meta name="keywords" content="提词器,在线提词器,镜像提词器,演讲提词器,直播提词器,teleprompter,滚动字幕">
+  <meta name="author" content="">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph（微信、钉钉等社交分享） -->
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="在线提词器 — 镜像·速度·全屏·无干扰">
+  <meta property="og:description" content="免费在线提词器，支持镜像翻转、速度调节、聚焦带、全屏及无干扰模式，PC 与移动端通用。">
+  <meta property="og:locale"      content="zh_CN">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary">
+  <meta name="twitter:title"       content="在线提词器 — 镜像·速度·全屏·无干扰">
+  <meta name="twitter:description" content="免费在线提词器，支持镜像翻转、速度调节、聚焦带、全屏及无干扰模式，PC 与移动端通用。">
+
+  <!-- 结构化数据 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "在线提词器",
+    "description": "免费在线提词器，支持镜像翻转、滚动速度调节、字号调整、聚焦带、亮暗色主题、全屏及无干扰模式，适配 PC 与移动端。",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Web",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
+    "featureList": [
+      "镜像翻转",
+      "滚动速度调节",
+      "字体大小调整",
+      "聚焦带高亮",
+      "亮色/暗色主题",
+      "全屏模式",
+      "无干扰模式",
+      "移动端适配"
+    ],
+    "inLanguage": "zh-CN"
+  }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── 主题变量 ── */
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111;
+      --border: #272727;
+      --text: #f0f0f0;
+      --muted: #666;
+      --hint: rgba(255,255,255,0.28);
+      --btn-hover: #1e1e1e;
+      --btn-hover-border: #444;
+      --modal-bg: #161616;
+      --accent: #4f8ef7;
+      --focus-color: rgba(79,142,247,0.12);
+      --dim-color: #777;
+      --gradient-fade: var(--bg);
+    }
+
+    body.light {
+      --bg: #f4f4f4;
+      --surface: #ffffff;
+      --border: #e0e0e0;
+      --text: #1a1a1a;
+      --muted: #999;
+      --hint: rgba(0,0,0,0.32);
+      --btn-hover: #f0f0f0;
+      --btn-hover-border: #bbb;
+      --modal-bg: #ffffff;
+      --accent: #2563eb;
+      --focus-color: rgba(37,99,235,0.1);
+      --dim-color: #bbb;
+      --gradient-fade: var(--bg);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    /* ── 控制栏 ── */
+    #controls {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      transition: transform 0.3s ease, opacity 0.3s ease, background 0.25s;
+    }
+
+    .ctrl-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .ctrl-group label { white-space: nowrap; }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 90px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+    }
+
+    .val-display {
+      color: var(--text);
+      min-width: 28px;
+      text-align: right;
+    }
+
+    .btn-group { display: flex; gap: 6px; }
+
+    button {
+      padding: 5px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    button:hover { background: var(--btn-hover); border-color: var(--btn-hover-border); }
+    button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    #playBtn {
+      padding: 5px 20px;
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    #playBtn:hover  { background: var(--accent); color: #fff; }
+    #playBtn.playing { background: var(--accent); color: #fff; }
+
+    .sep { width: 1px; height: 28px; background: var(--border); flex-shrink: 0; }
+
+    /* ── 舞台 ── */
+    #stage {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    #focus-band {
+      position: absolute; left: 0; right: 0;
+      top: 50%; transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 10;
+      transition: opacity 0.3s;
+    }
+    #focus-band.hidden { opacity: 0; }
+    #focus-band-inner {
+      margin: 0 auto;
+      height: var(--band-h, 80px);
+      background: var(--focus-color);
+      border-top: 1px solid rgba(79,142,247,0.3);
+      border-bottom: 1px solid rgba(79,142,247,0.3);
+    }
+
+    #stage::before, #stage::after {
+      content: '';
+      position: absolute; left: 0; right: 0;
+      height: 120px;
+      z-index: 5; pointer-events: none;
+    }
+    #stage::before { top: 0;    background: linear-gradient(to bottom, var(--gradient-fade), transparent); }
+    #stage::after  { bottom: 0; background: linear-gradient(to top,   var(--gradient-fade), transparent); }
+
+    #scroller {
+      position: absolute; left: 0; right: 0; top: 0;
+      padding: 55vh 10% 55vh;
+      will-change: transform;
+    }
+    #scroller.mirror { transform: scaleX(-1); }
+
+    #script-text {
+      font-size: 36px;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+      text-align: center;
+      outline: none;
+      transition: color 0.25s;
+    }
+    #script-text.dim { color: var(--dim-color); }
+    #script-text:empty::before {
+      content: attr(data-placeholder);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    /* ── 编辑模态 ── */
+    #editor-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    #editor-overlay.open { display: flex; }
+
+    #editor-modal {
+      background: var(--modal-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: min(680px, 90vw);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    #editor-modal h3 { font-size: 1rem; color: var(--muted); font-weight: 400; }
+
+    #editor-ta {
+      width: 100%; height: 300px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      padding: 14px;
+      resize: vertical;
+      outline: none;
+      font-family: inherit;
+      transition: background 0.25s, color 0.25s;
+    }
+    #editor-ta:focus { border-color: var(--accent); }
+    .modal-btns { display: flex; justify-content: flex-end; gap: 10px; }
+
+    /* ── 快捷键提示 ── */
+    #shortcuts {
+      position: fixed;
+      bottom: 14px; right: 16px;
+      font-size: 0.72rem;
+      color: var(--hint);
+      line-height: 1.9;
+      pointer-events: none;
+      z-index: 20;
+      text-align: right;
+      transition: opacity 0.3s, color 0.25s;
+    }
+
+    /* ── 无干扰模式 ── */
+    body.zen #controls {
+      transform: translateY(-100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+    body.zen #shortcuts { opacity: 0; }
+
+    /* 顶部悬停唤出区 */
+    #zen-trigger {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 8px;
+      z-index: 150;
+      display: none;
+    }
+    body.zen #zen-trigger { display: block; }
+    body.zen #zen-trigger:hover ~ #controls,
+    body.zen #zen-trigger:hover + * #controls {
+      /* 通过 JS 处理更可靠 */
+    }
+
+    /* 无干扰退出提示 */
+    #zen-hint {
+      position: fixed;
+      top: 16px; left: 50%; transform: translateX(-50%);
+      padding: 5px 16px;
+      background: rgba(0,0,0,0.5);
+      color: rgba(255,255,255,0.5);
+      border-radius: 20px;
+      font-size: 0.72rem;
+      pointer-events: none;
+      z-index: 160;
+      opacity: 0;
+      transition: opacity 0.3s;
+      white-space: nowrap;
+    }
+    body.light #zen-hint { background: rgba(0,0,0,0.15); color: rgba(0,0,0,0.4); }
+    body.zen #zen-hint { opacity: 1; }
+
+    /* ── 速度微调按钮 ── */
+    .speed-adj {
+      display: none;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      padding: 0;
+      font-size: 1.1rem;
+      line-height: 1;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── 移动端操作提示 ── */
+    #mobile-hint {
+      display: none;
+      position: fixed;
+      bottom: 14px; right: 16px;
+      font-size: 0.72rem;
+      color: var(--hint);
+      line-height: 1.9;
+      pointer-events: none;
+      z-index: 20;
+      text-align: right;
+      transition: opacity 0.3s, color 0.25s;
+    }
+    body.zen #mobile-hint { opacity: 0; }
+
+    /* zen-hint 内容按设备显示 */
+    .desktop-only { display: inline; }
+    .mobile-only  { display: none; }
+
+    /* ── pointer: coarse = 触摸设备 ── */
+    @media (pointer: coarse) {
+      #zen-trigger  { height: 56px; }
+      #shortcuts    { display: none; }
+      #mobile-hint  { display: block; }
+      .speed-adj    { display: flex; }
+      .desktop-only { display: none; }
+      .mobile-only  { display: inline; }
+      /* 滑块加大触摸区 */
+      input[type=range] { width: 80px; height: 20px; }
+      input[type=range]::-webkit-slider-thumb { width: 20px; height: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 顶部唤出区（无干扰模式用） -->
+<div id="zen-trigger"></div>
+<!-- 无干扰提示 -->
+<div id="zen-hint">
+  <span class="desktop-only">Tab · 退出无干扰</span>
+  <span class="mobile-only">触摸顶部 · 唤出控制栏</span>
+</div>
+
+<!-- 控制栏 -->
+<div id="controls">
+  <button id="playBtn">▶ 播放</button>
+
+  <div class="sep"></div>
+
+  <div class="ctrl-group">
+    <label>速度</label>
+    <button class="speed-adj" id="speedDown">−</button>
+    <input type="range" id="speedRange" min="1" max="10" step="0.5" value="3">
+    <button class="speed-adj" id="speedUp">+</button>
+    <span class="val-display" id="speedVal">3</span>
+  </div>
+
+  <div class="ctrl-group">
+    <label>字号</label>
+    <input type="range" id="fontRange" min="20" max="100" step="2" value="36">
+    <span class="val-display" id="fontVal">36</span>
+  </div>
+
+  <div class="ctrl-group">
+    <label>聚焦</label>
+    <input type="range" id="focusRange" min="40" max="200" step="10" value="80">
+    <span class="val-display" id="focusVal">80</span>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="btn-group">
+    <button id="mirrorBtn">镜像</button>
+    <button id="focusBtn" class="active">聚焦带</button>
+    <button id="dimBtn">淡化</button>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="btn-group">
+    <button id="themeBtn">亮色</button>
+    <button id="fullscreenBtn">全屏</button>
+    <button id="zenBtn">无干扰</button>
+  </div>
+
+  <div class="sep"></div>
+
+  <button id="editBtn">编辑文稿</button>
+  <button id="resetBtn">重置</button>
+</div>
+
+<!-- 舞台 -->
+<div id="stage">
+  <div id="focus-band"><div id="focus-band-inner"></div></div>
+  <div id="scroller">
+    <div id="script-text" data-placeholder="点击「编辑文稿」输入内容…"></div>
+  </div>
+</div>
+
+<!-- 快捷键提示（PC） -->
+<div id="shortcuts">
+  Space 播放/暂停<br>
+  ↑↓ 调速 · M 镜像 · R 重置<br>
+  T 主题 · F 全屏 · Tab 无干扰
+</div>
+
+<!-- 操作提示（移动端） -->
+<div id="mobile-hint">
+  点按舞台 播放/暂停<br>
+  触摸顶部 唤出控制栏
+</div>
+
+<!-- 编辑模态 -->
+<div id="editor-overlay">
+  <div id="editor-modal">
+    <h3>编辑文稿</h3>
+    <textarea id="editor-ta" placeholder="在此粘贴或输入演讲稿…"></textarea>
+    <div class="modal-btns">
+      <button id="cancelBtn">取消</button>
+      <button id="saveBtn" class="active">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let playing = false;
+  let scrollY = 0;
+  let rafId = null;
+  let lastTime = null;
+
+  const body        = document.body;
+  const scroller    = document.getElementById('scroller');
+  const scriptText  = document.getElementById('script-text');
+  const stage       = document.getElementById('stage');
+  const playBtn     = document.getElementById('playBtn');
+  const speedRange  = document.getElementById('speedRange');
+  const speedVal    = document.getElementById('speedVal');
+  const fontRange   = document.getElementById('fontRange');
+  const fontVal     = document.getElementById('fontVal');
+  const focusRange  = document.getElementById('focusRange');
+  const focusVal    = document.getElementById('focusVal');
+  const mirrorBtn   = document.getElementById('mirrorBtn');
+  const focusBtn    = document.getElementById('focusBtn');
+  const dimBtn      = document.getElementById('dimBtn');
+  const focusBand   = document.getElementById('focus-band');
+  const themeBtn    = document.getElementById('themeBtn');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  const zenBtn      = document.getElementById('zenBtn');
+  const editBtn     = document.getElementById('editBtn');
+  const resetBtn    = document.getElementById('resetBtn');
+  const overlay     = document.getElementById('editor-overlay');
+  const editorTa    = document.getElementById('editor-ta');
+  const cancelBtn   = document.getElementById('cancelBtn');
+  const saveBtn     = document.getElementById('saveBtn');
+  const zenTrigger  = document.getElementById('zen-trigger');
+  const controls    = document.getElementById('controls');
+
+  // ── 滚动 ──
+  function getSpeed() {
+    return 20 * Math.pow(parseFloat(speedRange.value), 1.6);
+  }
+
+  function applyTransform() {
+    const mirror = scroller.classList.contains('mirror');
+    scroller.style.transform = mirror
+      ? `scaleX(-1) translateY(${-scrollY}px)`
+      : `translateY(${-scrollY}px)`;
+  }
+
+  function tick(ts) {
+    if (!playing) return;
+    if (lastTime == null) lastTime = ts;
+    const dt = (ts - lastTime) / 1000;
+    lastTime = ts;
+    const maxScroll = scroller.scrollHeight - stage.clientHeight;
+    scrollY = Math.min(scrollY + getSpeed() * dt, maxScroll);
+    applyTransform();
+    if (scrollY >= maxScroll) { stopPlay(); return; }
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function stopPlay() {
+    playing = false;
+    playBtn.textContent = '▶ 播放';
+    playBtn.classList.remove('playing');
+    cancelAnimationFrame(rafId);
+    lastTime = null;
+  }
+
+  function togglePlay() {
+    playing = !playing;
+    if (playing) {
+      playBtn.textContent = '⏸ 暂停';
+      playBtn.classList.add('playing');
+      lastTime = null;
+      rafId = requestAnimationFrame(tick);
+    } else {
+      stopPlay();
+    }
+  }
+
+  playBtn.addEventListener('click', togglePlay);
+
+  // ── 速度 / 字号 / 聚焦 ──
+  speedRange.addEventListener('input', () => { speedVal.textContent = speedRange.value; });
+
+  function adjustSpeed(delta) {
+    speedRange.value = Math.min(10, Math.max(1, parseFloat(speedRange.value) + delta));
+    speedVal.textContent = speedRange.value;
+  }
+  document.getElementById('speedDown').addEventListener('click', () => adjustSpeed(-0.5));
+  document.getElementById('speedUp').addEventListener('click',   () => adjustSpeed(+0.5));
+
+  fontRange.addEventListener('input', () => {
+    const v = fontRange.value;
+    fontVal.textContent = v;
+    scriptText.style.fontSize = v + 'px';
+    const auto = Math.min(200, Math.max(40, Math.round(parseFloat(v) * 1.7 * 1.2)));
+    focusRange.value = auto;
+    focusVal.textContent = auto;
+    document.documentElement.style.setProperty('--band-h', auto + 'px');
+  });
+
+  focusRange.addEventListener('input', () => {
+    focusVal.textContent = focusRange.value;
+    document.documentElement.style.setProperty('--band-h', focusRange.value + 'px');
+  });
+
+  // ── 开关 ──
+  mirrorBtn.addEventListener('click', () => {
+    scroller.classList.toggle('mirror');
+    mirrorBtn.classList.toggle('active');
+    applyTransform();
+  });
+
+  focusBtn.addEventListener('click', () => {
+    focusBtn.classList.toggle('active');
+    focusBand.classList.toggle('hidden', !focusBtn.classList.contains('active'));
+  });
+
+  dimBtn.addEventListener('click', () => {
+    dimBtn.classList.toggle('active');
+    scriptText.classList.toggle('dim', dimBtn.classList.contains('active'));
+  });
+
+  resetBtn.addEventListener('click', () => {
+    stopPlay();
+    scrollY = 0;
+    applyTransform();
+  });
+
+  // ── 主题切换 ──
+  function toggleTheme() {
+    body.classList.toggle('light');
+    const isLight = body.classList.contains('light');
+    themeBtn.textContent = isLight ? '暗色' : '亮色';
+    themeBtn.classList.toggle('active', isLight);
+  }
+  themeBtn.addEventListener('click', toggleTheme);
+
+  // ── 全屏 ──
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+  fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+  document.addEventListener('fullscreenchange', () => {
+    const isFull = !!document.fullscreenElement;
+    fullscreenBtn.textContent = isFull ? '退出全屏' : '全屏';
+    fullscreenBtn.classList.toggle('active', isFull);
+  });
+
+  // ── 无干扰模式 ──
+  let zenRevealTimer = null;
+
+  function toggleZen() {
+    body.classList.toggle('zen');
+    zenBtn.classList.toggle('active', body.classList.contains('zen'));
+  }
+
+  zenBtn.addEventListener('click', toggleZen);
+
+  // 顶部悬停唤出控制栏
+  zenTrigger.addEventListener('mouseenter', () => {
+    controls.style.transform = '';
+    controls.style.opacity = '1';
+    controls.style.pointerEvents = '';
+    clearTimeout(zenRevealTimer);
+  });
+
+  zenTrigger.addEventListener('mouseleave', () => {
+    // 留 500ms 缓冲让鼠标移到控制栏
+  });
+
+  controls.addEventListener('mouseleave', () => {
+    if (!body.classList.contains('zen')) return;
+    zenRevealTimer = setTimeout(() => {
+      controls.style.transform = '';
+      controls.style.opacity = '';
+      controls.style.pointerEvents = '';
+    }, 300);
+  });
+
+  controls.addEventListener('mouseenter', () => {
+    clearTimeout(zenRevealTimer);
+  });
+
+  // ── 编辑文稿 ──
+  editBtn.addEventListener('click', () => {
+    editorTa.value = scriptText.innerText;
+    overlay.classList.add('open');
+    editorTa.focus();
+  });
+
+  cancelBtn.addEventListener('click', () => overlay.classList.remove('open'));
+
+  saveBtn.addEventListener('click', () => {
+    scriptText.textContent = editorTa.value;
+    overlay.classList.remove('open');
+    scrollY = 0;
+    applyTransform();
+  });
+
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+
+  // ── 键盘 ──
+  document.addEventListener('keydown', e => {
+    if (overlay.classList.contains('open')) return;
+    switch (e.code) {
+      case 'Space':     e.preventDefault(); togglePlay(); break;
+      case 'ArrowUp':   e.preventDefault(); adjustSpeed(+0.5); break;
+      case 'ArrowDown': e.preventDefault(); adjustSpeed(-0.5); break;
+      case 'KeyM':      mirrorBtn.click(); break;
+      case 'KeyR':      resetBtn.click(); break;
+      case 'KeyT':      toggleTheme(); break;
+      case 'KeyF':      toggleFullscreen(); break;
+      case 'Tab':       e.preventDefault(); toggleZen(); break;
+    }
+  });
+
+  // ── 拖动 + 移动端点按 ──
+  let dragStartY = null, dragStartScroll = 0;
+  let tapStartY = null, tapStartX = null, tapStartTime = null;
+
+  stage.addEventListener('mousedown', e => {
+    dragStartY = e.clientY;
+    dragStartScroll = scrollY;
+  });
+  document.addEventListener('mousemove', e => {
+    if (dragStartY == null) return;
+    const max = scroller.scrollHeight - stage.clientHeight;
+    scrollY = Math.max(0, Math.min(max, dragStartScroll + (dragStartY - e.clientY)));
+    applyTransform();
+  });
+  document.addEventListener('mouseup', () => { dragStartY = null; });
+
+  stage.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    dragStartY = t.clientY;
+    dragStartScroll = scrollY;
+    tapStartY = t.clientY;
+    tapStartX = t.clientX;
+    tapStartTime = performance.now();
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if (dragStartY == null) return;
+    const max = scroller.scrollHeight - stage.clientHeight;
+    scrollY = Math.max(0, Math.min(max, dragStartScroll + (dragStartY - e.touches[0].clientY)));
+    applyTransform();
+  }, { passive: true });
+
+  // 舞台 touchend：区分点按（播放/暂停）与拖动（调位置）
+  stage.addEventListener('touchend', e => {
+    if (tapStartY == null) return;
+    const t = e.changedTouches[0];
+    const dy = Math.abs(t.clientY - tapStartY);
+    const dx = Math.abs(t.clientX - tapStartX);
+    const dt = performance.now() - tapStartTime;
+    if (dy < 12 && dx < 12 && dt < 350) togglePlay();
+  });
+
+  document.addEventListener('touchend', () => {
+    dragStartY = null;
+    tapStartY = null; tapStartX = null; tapStartTime = null;
+  });
+
+  // 无干扰模式：触摸顶部唤出控制栏 3 秒后自动收起
+  let zenTouchTimer = null;
+  zenTrigger.addEventListener('touchstart', () => {
+    if (!body.classList.contains('zen')) return;
+    controls.style.transform = '';
+    controls.style.opacity = '1';
+    controls.style.pointerEvents = '';
+    clearTimeout(zenTouchTimer);
+    zenTouchTimer = setTimeout(() => {
+      if (body.classList.contains('zen')) {
+        controls.style.transform = '';
+        controls.style.opacity = '';
+        controls.style.pointerEvents = '';
+      }
+    }, 3000);
+  }, { passive: true });
+
+  // ── 初始文稿 ──
+  scriptText.textContent = `大家好，欢迎来到今天的分享。
+
+今天我想和大家聊一聊，关于迈出第一步的勇气。
+
+每一段旅程，都始于一个微小的决定。
+不必完美，不必准备好一切，
+只需要开始。
+
+正如古人所言——
+千里之行，始于足下。
+
+感谢大家的聆听。`;
+</script>
+</body>
+</html>
