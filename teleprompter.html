@@ -281,8 +281,9 @@
       pointer-events: none;
     }
     body.zen #shortcuts { opacity: 0; }
+    body.zen #mobile-hint { opacity: 0; }
 
-    /* 顶部悬停唤出区 */
+    /* 顶部悬停唤出区（PC hover 用） */
     #zen-trigger {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -291,28 +292,54 @@
       display: none;
     }
     body.zen #zen-trigger { display: block; }
-    body.zen #zen-trigger:hover ~ #controls,
-    body.zen #zen-trigger:hover + * #controls {
-      /* 通过 JS 处理更可靠 */
-    }
 
-    /* 无干扰退出提示 */
+    /* 无干扰悬浮按钮 */
+    #zen-fab {
+      position: fixed;
+      top: 14px; right: 16px;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(30,30,30,0.55);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.75);
+      font-size: 1rem;
+      display: none;
+      align-items: center; justify-content: center;
+      cursor: pointer;
+      z-index: 160;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background 0.2s, transform 0.2s;
+      padding: 0;
+    }
+    body.zen #zen-fab { display: flex; }
+    body.zen.controls-peeking #zen-fab { transform: translateY(calc(var(--controls-h, 48px) + 4px)); }
+    body.light #zen-fab {
+      background: rgba(240,240,240,0.7);
+      border-color: rgba(0,0,0,0.1);
+      color: rgba(0,0,0,0.6);
+    }
+    #zen-fab:hover { background: rgba(60,60,60,0.75); }
+    body.light #zen-fab:hover { background: rgba(210,210,210,0.85); }
+
+    /* 无干扰提示（仅 PC 显示） */
     #zen-hint {
       position: fixed;
       top: 16px; left: 50%; transform: translateX(-50%);
       padding: 5px 16px;
-      background: rgba(0,0,0,0.5);
-      color: rgba(255,255,255,0.5);
+      background: rgba(0,0,0,0.45);
+      color: rgba(255,255,255,0.45);
       border-radius: 20px;
       font-size: 0.72rem;
       pointer-events: none;
-      z-index: 160;
+      z-index: 155;
       opacity: 0;
       transition: opacity 0.3s;
       white-space: nowrap;
     }
-    body.light #zen-hint { background: rgba(0,0,0,0.15); color: rgba(0,0,0,0.4); }
+    body.light #zen-hint { background: rgba(0,0,0,0.12); color: rgba(0,0,0,0.35); }
     body.zen #zen-hint { opacity: 1; }
+    @media (pointer: coarse) { #zen-hint { display: none; } }
 
     /* ── 速度微调按钮 ── */
     .speed-adj {
@@ -362,12 +389,13 @@
 </head>
 <body>
 
-<!-- 顶部唤出区（无干扰模式用） -->
+<!-- 顶部唤出区（PC hover 用） -->
 <div id="zen-trigger"></div>
-<!-- 无干扰提示 -->
+<!-- 无干扰悬浮按钮 -->
+<button id="zen-fab" title="唤出控制栏">☰</button>
+<!-- 无干扰提示（PC） -->
 <div id="zen-hint">
   <span class="desktop-only">Tab · 退出无干扰</span>
-  <span class="mobile-only">触摸顶部 · 唤出控制栏</span>
 </div>
 
 <!-- 控制栏 -->
@@ -605,36 +633,64 @@
 
   // ── 无干扰模式 ──
   let zenRevealTimer = null;
+  const zenFab = document.getElementById('zen-fab');
 
   function toggleZen() {
     body.classList.toggle('zen');
     zenBtn.classList.toggle('active', body.classList.contains('zen'));
+    if (!body.classList.contains('zen')) zenHideControls();
   }
-
   zenBtn.addEventListener('click', toggleZen);
 
-  // 顶部悬停唤出控制栏
-  zenTrigger.addEventListener('mouseenter', () => {
-    controls.style.transform = '';
+  function zenShowControls() {
+    if (!body.classList.contains('zen')) return;
+    // 必须用 translateY(0) 覆盖 CSS 的 translateY(-100%)
+    controls.style.transform = 'translateY(0)';
     controls.style.opacity = '1';
+    controls.style.pointerEvents = 'auto';
+    body.classList.add('controls-peeking');
+    // 更新 FAB 下移量（跟随控制栏实际高度）
+    document.documentElement.style.setProperty('--controls-h', controls.offsetHeight + 'px');
+    clearTimeout(zenRevealTimer);
+  }
+
+  function zenHideControls() {
+    controls.style.transform = '';
+    controls.style.opacity = '';
     controls.style.pointerEvents = '';
+    body.classList.remove('controls-peeking');
+  }
+
+  function zenStartAutoHide(ms) {
+    clearTimeout(zenRevealTimer);
+    zenRevealTimer = setTimeout(() => {
+      if (body.classList.contains('zen')) zenHideControls();
+    }, ms);
+  }
+
+  // FAB 点击：显示控制栏 4 秒
+  zenFab.addEventListener('click', () => {
+    if (body.classList.contains('controls-peeking')) {
+      zenHideControls();
+    } else {
+      zenShowControls();
+      zenStartAutoHide(4000);
+    }
+  });
+
+  // PC：鼠标移到顶部 8px 区域唤出
+  zenTrigger.addEventListener('mouseenter', () => {
+    zenShowControls();
     clearTimeout(zenRevealTimer);
   });
 
-  zenTrigger.addEventListener('mouseleave', () => {
-    // 留 500ms 缓冲让鼠标移到控制栏
-  });
-
+  // 鼠标离开控制栏 → 延迟收起
   controls.addEventListener('mouseleave', () => {
     if (!body.classList.contains('zen')) return;
-    zenRevealTimer = setTimeout(() => {
-      controls.style.transform = '';
-      controls.style.opacity = '';
-      controls.style.pointerEvents = '';
-    }, 300);
+    zenStartAutoHide(600);
   });
-
   controls.addEventListener('mouseenter', () => {
+    if (!body.classList.contains('zen')) return;
     clearTimeout(zenRevealTimer);
   });
 
@@ -719,23 +775,6 @@
     dragStartY = null;
     tapStartY = null; tapStartX = null; tapStartTime = null;
   });
-
-  // 无干扰模式：触摸顶部唤出控制栏 3 秒后自动收起
-  let zenTouchTimer = null;
-  zenTrigger.addEventListener('touchstart', () => {
-    if (!body.classList.contains('zen')) return;
-    controls.style.transform = '';
-    controls.style.opacity = '1';
-    controls.style.pointerEvents = '';
-    clearTimeout(zenTouchTimer);
-    zenTouchTimer = setTimeout(() => {
-      if (body.classList.contains('zen')) {
-        controls.style.transform = '';
-        controls.style.opacity = '';
-        controls.style.pointerEvents = '';
-      }
-    }, 3000);
-  }, { passive: true });
 
   // ── 初始文稿 ──
   scriptText.textContent = `大家好，欢迎来到今天的分享。
