@@ -5,25 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- 基础 SEO -->
-  <title>在线提词器 — 镜像·速度·全屏·无干扰</title>
-  <meta name="description" content="免费在线提词器，支持镜像翻转、滚动速度调节、字号调整、聚焦带、亮暗色主题、全屏及无干扰模式，适配 PC 与移动端，无需安装即用。">
-  <meta name="keywords" content="提词器,在线提词器,镜像提词器,演讲提词器,直播提词器,teleprompter,滚动字幕">
-  <meta name="author" content="">
-  <meta name="robots" content="index, follow">
+  <title id="page-title">在线提词器 — 镜像·速度·全屏·无干扰</title>
+  <meta id="meta-desc"  name="description" content="免费在线提词器，支持镜像翻转、滚动速度调节、字号调整、聚焦带、亮暗色主题、全屏及无干扰模式，适配 PC 与移动端，无需安装即用。">
+  <meta id="meta-kw"    name="keywords"    content="提词器,在线提词器,镜像提词器,演讲提词器,直播提词器,teleprompter,滚动字幕">
+  <meta name="author"  content="">
+  <meta name="robots"  content="index, follow">
 
-  <!-- Open Graph（微信、钉钉等社交分享） -->
+  <!-- hreflang 多语言版本声明 -->
+  <link rel="alternate" hreflang="zh-CN" href="?lang=zh-CN">
+  <link rel="alternate" hreflang="zh-TW" href="?lang=zh-TW">
+  <link rel="alternate" hreflang="en"    href="?lang=en">
+  <link rel="alternate" hreflang="ru"    href="?lang=ru">
+  <link rel="alternate" hreflang="x-default" href="?lang=zh-CN">
+
+  <!-- Open Graph -->
   <meta property="og:type"        content="website">
-  <meta property="og:title"       content="在线提词器 — 镜像·速度·全屏·无干扰">
-  <meta property="og:description" content="免费在线提词器，支持镜像翻转、速度调节、聚焦带、全屏及无干扰模式，PC 与移动端通用。">
-  <meta property="og:locale"      content="zh_CN">
+  <meta id="og-title"  property="og:title"       content="在线提词器 — 镜像·速度·全屏·无干扰">
+  <meta id="og-desc"   property="og:description" content="免费在线提词器，支持镜像翻转、速度调节、聚焦带、全屏及无干扰模式，PC 与移动端通用。">
+  <meta id="og-locale" property="og:locale"      content="zh_CN">
+  <meta property="og:locale:alternate" content="zh_TW">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:locale:alternate" content="ru_RU">
 
   <!-- Twitter Card -->
-  <meta name="twitter:card"        content="summary">
-  <meta name="twitter:title"       content="在线提词器 — 镜像·速度·全屏·无干扰">
-  <meta name="twitter:description" content="免费在线提词器，支持镜像翻转、速度调节、聚焦带、全屏及无干扰模式，PC 与移动端通用。">
+  <meta name="twitter:card" content="summary">
+  <meta id="tw-title" name="twitter:title"       content="在线提词器 — 镜像·速度·全屏·无干扰">
+  <meta id="tw-desc"  name="twitter:description" content="免费在线提词器，支持镜像翻转、速度调节、聚焦带、全屏及无干扰模式，PC 与移动端通用。">
 
-  <!-- 结构化数据 -->
-  <script type="application/ld+json">
+  <!-- 结构化数据（由 JS 动态更新语言） -->
+  <script id="json-ld" type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
@@ -32,16 +42,7 @@
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "Web",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
-    "featureList": [
-      "镜像翻转",
-      "滚动速度调节",
-      "字体大小调整",
-      "聚焦带高亮",
-      "亮色/暗色主题",
-      "全屏模式",
-      "无干扰模式",
-      "移动端适配"
-    ],
+    "featureList": ["镜像翻转","滚动速度调节","字体大小调整","聚焦带高亮","亮色/暗色主题","全屏模式","无干扰模式","移动端适配"],
     "inLanguage": "zh-CN"
   }
   </script>
@@ -163,6 +164,21 @@
     #playBtn.playing { background: var(--accent); color: #fff; }
 
     .sep { width: 1px; height: 28px; background: var(--border); flex-shrink: 0; }
+
+    /* ── 语言选择 ── */
+    #langSelect {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 4px 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.15s, color 0.25s;
+    }
+    #langSelect:hover { border-color: var(--btn-hover-border); }
+    body.light #langSelect { background: var(--surface); }
 
     /* ── 舞台 ── */
     #stage {
@@ -400,12 +416,12 @@
 
 <!-- 控制栏 -->
 <div id="controls">
-  <button id="playBtn">▶ 播放</button>
+  <button id="playBtn" data-i18n="play">▶ 播放</button>
 
   <div class="sep"></div>
 
   <div class="ctrl-group">
-    <label>速度</label>
+    <label data-i18n="speed">速度</label>
     <button class="speed-adj" id="speedDown">−</button>
     <input type="range" id="speedRange" min="1" max="10" step="0.5" value="3">
     <button class="speed-adj" id="speedUp">+</button>
@@ -413,13 +429,13 @@
   </div>
 
   <div class="ctrl-group">
-    <label>字号</label>
+    <label data-i18n="fontSize">字号</label>
     <input type="range" id="fontRange" min="20" max="100" step="2" value="36">
     <span class="val-display" id="fontVal">36</span>
   </div>
 
   <div class="ctrl-group">
-    <label>聚焦</label>
+    <label data-i18n="focus">聚焦</label>
     <input type="range" id="focusRange" min="40" max="200" step="10" value="80">
     <span class="val-display" id="focusVal">80</span>
   </div>
@@ -427,23 +443,30 @@
   <div class="sep"></div>
 
   <div class="btn-group">
-    <button id="mirrorBtn">镜像</button>
-    <button id="focusBtn" class="active">聚焦带</button>
-    <button id="dimBtn">淡化</button>
+    <button id="mirrorBtn" data-i18n="mirror">镜像</button>
+    <button id="focusBtn" class="active" data-i18n="focusBand">聚焦带</button>
+    <button id="dimBtn" data-i18n="dim">淡化</button>
   </div>
 
   <div class="sep"></div>
 
   <div class="btn-group">
-    <button id="themeBtn">亮色</button>
-    <button id="fullscreenBtn">全屏</button>
-    <button id="zenBtn">无干扰</button>
+    <button id="themeBtn" data-i18n="light">亮色</button>
+    <button id="fullscreenBtn" data-i18n="fullscreen">全屏</button>
+    <button id="zenBtn" data-i18n="zen">无干扰</button>
   </div>
 
   <div class="sep"></div>
 
-  <button id="editBtn">编辑文稿</button>
-  <button id="resetBtn">重置</button>
+  <button id="editBtn" data-i18n="edit">编辑文稿</button>
+  <button id="resetBtn" data-i18n="reset">重置</button>
+  <div class="sep"></div>
+  <select id="langSelect" title="Language">
+    <option value="zh-CN">简体中文</option>
+    <option value="zh-TW">繁體中文</option>
+    <option value="en">English</option>
+    <option value="ru">Русский</option>
+  </select>
 </div>
 
 <!-- 舞台 -->
@@ -470,47 +493,197 @@
 <!-- 编辑模态 -->
 <div id="editor-overlay">
   <div id="editor-modal">
-    <h3>编辑文稿</h3>
+    <h3 data-i18n="editTitle">编辑文稿</h3>
     <textarea id="editor-ta" placeholder="在此粘贴或输入演讲稿…"></textarea>
     <div class="modal-btns">
-      <button id="cancelBtn">取消</button>
-      <button id="saveBtn" class="active">保存</button>
+      <button id="cancelBtn" data-i18n="cancel">取消</button>
+      <button id="saveBtn" class="active" data-i18n="save">保存</button>
     </div>
   </div>
 </div>
 
 <script>
+  // ── 国际化 ──
+  const LANGS = {
+    'zh-CN': {
+      htmlLang: 'zh-CN', ogLocale: 'zh_CN',
+      pageTitle: '在线提词器 — 镜像·速度·全屏·无干扰',
+      description: '免费在线提词器，支持镜像翻转、滚动速度调节、字号调整、聚焦带、亮暗色主题、全屏及无干扰模式，适配 PC 与移动端，无需安装即用。',
+      keywords: '提词器,在线提词器,镜像提词器,演讲提词器,直播提词器,teleprompter,滚动字幕',
+      featureList: ['镜像翻转','滚动速度调节','字体大小调整','聚焦带高亮','亮色/暗色主题','全屏模式','无干扰模式','移动端适配'],
+      play: '▶ 播放', pause: '⏸ 暂停',
+      speed: '速度', fontSize: '字号', focus: '聚焦',
+      mirror: '镜像', focusBand: '聚焦带', dim: '淡化',
+      light: '亮色', dark: '暗色',
+      fullscreen: '全屏', exitFullscreen: '退出全屏',
+      zen: '无干扰', edit: '编辑文稿', reset: '重置',
+      editTitle: '编辑文稿',
+      taPlaceholder: '在此粘贴或输入演讲稿…',
+      scriptPlaceholder: '点击「编辑文稿」输入内容…',
+      cancel: '取消', save: '保存',
+      shortcutsHtml: 'Space 播放/暂停<br>↑↓ 调速 · M 镜像 · R 重置<br>T 主题 · F 全屏 · Tab 无干扰',
+      mobileHintHtml: '点按舞台 播放/暂停<br>右上角按钮 唤出控制栏',
+      zenHint: 'Tab · 退出无干扰', fabTitle: '唤出控制栏',
+      sample: `大家好，欢迎来到今天的分享。\n\n今天我想和大家聊一聊，关于迈出第一步的勇气。\n\n每一段旅程，都始于一个微小的决定。\n不必完美，不必准备好一切，\n只需要开始。\n\n正如古人所言——\n千里之行，始于足下。\n\n感谢大家的聆听。`,
+    },
+    'zh-TW': {
+      htmlLang: 'zh-TW', ogLocale: 'zh_TW',
+      pageTitle: '線上提詞器 — 鏡像·速度·全螢幕·無干擾',
+      description: '免費線上提詞器，支援鏡像翻轉、滾動速度調節、字號調整、聚焦帶、亮暗色主題、全螢幕及無干擾模式，適配 PC 與行動端，無需安裝即用。',
+      keywords: '提詞器,線上提詞器,鏡像提詞器,演講提詞器,直播提詞器,teleprompter,滾動字幕',
+      featureList: ['鏡像翻轉','滾動速度調節','字體大小調整','聚焦帶高亮','亮色/暗色主題','全螢幕模式','無干擾模式','行動端適配'],
+      play: '▶ 播放', pause: '⏸ 暫停',
+      speed: '速度', fontSize: '字號', focus: '聚焦',
+      mirror: '鏡像', focusBand: '聚焦帶', dim: '淡化',
+      light: '亮色', dark: '暗色',
+      fullscreen: '全螢幕', exitFullscreen: '退出全螢幕',
+      zen: '無干擾', edit: '編輯文稿', reset: '重置',
+      editTitle: '編輯文稿',
+      taPlaceholder: '在此貼上或輸入講稿…',
+      scriptPlaceholder: '點擊「編輯文稿」輸入內容…',
+      cancel: '取消', save: '儲存',
+      shortcutsHtml: 'Space 播放/暫停<br>↑↓ 調速 · M 鏡像 · R 重置<br>T 主題 · F 全螢幕 · Tab 無干擾',
+      mobileHintHtml: '點按舞台 播放/暫停<br>右上角按鈕 喚出控制欄',
+      zenHint: 'Tab · 退出無干擾', fabTitle: '喚出控制欄',
+      sample: `大家好，歡迎來到今天的分享。\n\n今天我想和大家聊一聊，關於邁出第一步的勇氣。\n\n每一段旅程，都始於一個微小的決定。\n不必完美，不必準備好一切，\n只需要開始。\n\n正如古人所言——\n千里之行，始於足下。\n\n感謝大家的聆聽。`,
+    },
+    'en': {
+      htmlLang: 'en', ogLocale: 'en_US',
+      pageTitle: 'Online Teleprompter — Mirror · Speed · Fullscreen · Zen',
+      description: 'Free online teleprompter with mirror flip, scroll speed control, font size adjustment, focus band, light/dark theme, fullscreen and distraction-free mode. Works on desktop and mobile, no installation needed.',
+      keywords: 'teleprompter,online teleprompter,mirror teleprompter,speech teleprompter,live teleprompter,scrolling script',
+      featureList: ['Mirror flip','Scroll speed control','Font size adjustment','Focus band highlight','Light/dark theme','Fullscreen mode','Distraction-free mode','Mobile support'],
+      play: '▶ Play', pause: '⏸ Pause',
+      speed: 'Speed', fontSize: 'Size', focus: 'Focus',
+      mirror: 'Mirror', focusBand: 'Band', dim: 'Dim',
+      light: 'Light', dark: 'Dark',
+      fullscreen: 'Fullscreen', exitFullscreen: 'Exit FS',
+      zen: 'Zen', edit: 'Edit Script', reset: 'Reset',
+      editTitle: 'Edit Script',
+      taPlaceholder: 'Paste or type your script here…',
+      scriptPlaceholder: 'Click "Edit Script" to add content…',
+      cancel: 'Cancel', save: 'Save',
+      shortcutsHtml: 'Space play/pause<br>↑↓ speed · M mirror · R reset<br>T theme · F fullscreen · Tab zen',
+      mobileHintHtml: 'Tap stage to play / pause<br>Top-right button to show controls',
+      zenHint: 'Tab · exit zen mode', fabTitle: 'Show controls',
+      sample: `Good evening, everyone.\n\nTonight, I want to talk about the courage\nto take that very first step.\n\nEvery journey begins with a single decision.\nYou don't need to be perfect —\nyou just need to begin.\n\nAs the old saying goes:\nA journey of a thousand miles\nbegins with a single step.\n\nThank you.`,
+    },
+    'ru': {
+      htmlLang: 'ru', ogLocale: 'ru_RU',
+      pageTitle: 'Телесуфлёр онлайн — Зеркало · Скорость · Полный экран',
+      description: 'Бесплатный онлайн-телесуфлёр с зеркальным отражением, регулировкой скорости прокрутки, размером шрифта, полосой фокуса, светлой/тёмной темой, полноэкранным и режимом без отвлечений. Работает на ПК и мобильных устройствах.',
+      keywords: 'телесуфлёр,онлайн телесуфлёр,суфлёр для выступлений,зеркальный суфлёр,teleprompter',
+      featureList: ['Зеркальное отражение','Регулировка скорости прокрутки','Изменение размера шрифта','Подсветка полосы фокуса','Светлая/тёмная тема','Полноэкранный режим','Режим без отвлечений','Поддержка мобильных устройств'],
+      play: '▶ Старт', pause: '⏸ Пауза',
+      speed: 'Скорость', fontSize: 'Размер', focus: 'Фокус',
+      mirror: 'Зеркало', focusBand: 'Полоса', dim: 'Затемнить',
+      light: 'Светлая', dark: 'Тёмная',
+      fullscreen: 'На весь экран', exitFullscreen: 'Свернуть',
+      zen: 'Фокус-режим', edit: 'Редактировать', reset: 'Сброс',
+      editTitle: 'Редактировать текст',
+      taPlaceholder: 'Вставьте или введите текст выступления…',
+      scriptPlaceholder: 'Нажмите «Редактировать» для ввода…',
+      cancel: 'Отмена', save: 'Сохранить',
+      shortcutsHtml: 'Space старт/пауза<br>↑↓ скорость · M зеркало · R сброс<br>T тема · F экран · Tab фокус',
+      mobileHintHtml: 'Нажмите для паузы<br>Кнопка справа вверху — открыть меню',
+      zenHint: 'Tab · выйти из фокус-режима', fabTitle: 'Открыть панель',
+      sample: `Добрый вечер, дорогие друзья.\n\nСегодня я хочу поговорить о смелости\nсделать первый шаг.\n\nКаждое путешествие начинается\nс одного маленького решения.\nНе нужно быть идеальным —\nнужно просто начать.\n\nКак гласит древняя мудрость:\nпуть в тысячу ли\nначинается с первого шага.\n\nСпасибо за внимание.`,
+    },
+  };
+
+  let currentLang = 'zh-CN';
+  function t(key) { return LANGS[currentLang][key]; }
+
+  function applyLang(code) {
+    currentLang = code;
+    const lng = LANGS[code];
+    document.documentElement.lang = lng.htmlLang;
+    document.title = lng.pageTitle;
+
+    // ── SEO meta 同步 ──
+    document.getElementById('meta-desc').content  = lng.description;
+    document.getElementById('meta-kw').content    = lng.keywords;
+    document.getElementById('og-title').content   = lng.pageTitle;
+    document.getElementById('og-desc').content    = lng.description;
+    document.getElementById('og-locale').content  = lng.ogLocale;
+    document.getElementById('tw-title').content   = lng.pageTitle;
+    document.getElementById('tw-desc').content    = lng.description;
+    document.getElementById('json-ld').textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: lng.pageTitle.split(' —')[0].split(' -')[0].trim(),
+      description: lng.description,
+      applicationCategory: 'UtilitiesApplication',
+      operatingSystem: 'Web',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'CNY' },
+      featureList: lng.featureList,
+      inLanguage: lng.htmlLang,
+    });
+    // URL 同步（不刷新页面）
+    history.replaceState(null, '', '?lang=' + code);
+
+    // data-i18n 静态元素（不含状态驱动的按钮）
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.dataset.i18n;
+      if (lng[key] !== undefined) el.textContent = lng[key];
+    });
+
+    // 状态驱动按钮
+    playBtn.textContent      = playing ? lng.pause : lng.play;
+    themeBtn.textContent     = body.classList.contains('light') ? lng.dark : lng.light;
+    fullscreenBtn.textContent = document.fullscreenElement ? lng.exitFullscreen : lng.fullscreen;
+
+    // innerHTML 提示区
+    document.getElementById('shortcuts').innerHTML    = lng.shortcutsHtml;
+    document.getElementById('mobile-hint').innerHTML  = lng.mobileHintHtml;
+    document.querySelector('#zen-hint .desktop-only').textContent = lng.zenHint;
+
+    // 属性
+    editorTa.placeholder           = lng.taPlaceholder;
+    scriptText.dataset.placeholder = lng.scriptPlaceholder;
+    zenFab.title                   = lng.fabTitle;
+
+    // 语言选择器同步
+    langSelect.value = code;
+
+    localStorage.setItem('ticiqi-lang', code);
+  }
+
+  // ── 状态 ──
   let playing = false;
   let scrollY = 0;
   let rafId = null;
   let lastTime = null;
 
-  const body        = document.body;
-  const scroller    = document.getElementById('scroller');
-  const scriptText  = document.getElementById('script-text');
-  const stage       = document.getElementById('stage');
-  const playBtn     = document.getElementById('playBtn');
-  const speedRange  = document.getElementById('speedRange');
-  const speedVal    = document.getElementById('speedVal');
-  const fontRange   = document.getElementById('fontRange');
-  const fontVal     = document.getElementById('fontVal');
-  const focusRange  = document.getElementById('focusRange');
-  const focusVal    = document.getElementById('focusVal');
-  const mirrorBtn   = document.getElementById('mirrorBtn');
-  const focusBtn    = document.getElementById('focusBtn');
-  const dimBtn      = document.getElementById('dimBtn');
-  const focusBand   = document.getElementById('focus-band');
-  const themeBtn    = document.getElementById('themeBtn');
+  // ── DOM ──
+  const body          = document.body;
+  const scroller      = document.getElementById('scroller');
+  const scriptText    = document.getElementById('script-text');
+  const stage         = document.getElementById('stage');
+  const playBtn       = document.getElementById('playBtn');
+  const speedRange    = document.getElementById('speedRange');
+  const speedVal      = document.getElementById('speedVal');
+  const fontRange     = document.getElementById('fontRange');
+  const fontVal       = document.getElementById('fontVal');
+  const focusRange    = document.getElementById('focusRange');
+  const focusVal      = document.getElementById('focusVal');
+  const mirrorBtn     = document.getElementById('mirrorBtn');
+  const focusBtn      = document.getElementById('focusBtn');
+  const dimBtn        = document.getElementById('dimBtn');
+  const focusBand     = document.getElementById('focus-band');
+  const themeBtn      = document.getElementById('themeBtn');
   const fullscreenBtn = document.getElementById('fullscreenBtn');
-  const zenBtn      = document.getElementById('zenBtn');
-  const editBtn     = document.getElementById('editBtn');
-  const resetBtn    = document.getElementById('resetBtn');
-  const overlay     = document.getElementById('editor-overlay');
-  const editorTa    = document.getElementById('editor-ta');
-  const cancelBtn   = document.getElementById('cancelBtn');
-  const saveBtn     = document.getElementById('saveBtn');
-  const zenTrigger  = document.getElementById('zen-trigger');
-  const controls    = document.getElementById('controls');
+  const zenBtn        = document.getElementById('zenBtn');
+  const editBtn       = document.getElementById('editBtn');
+  const resetBtn      = document.getElementById('resetBtn');
+  const overlay       = document.getElementById('editor-overlay');
+  const editorTa      = document.getElementById('editor-ta');
+  const cancelBtn     = document.getElementById('cancelBtn');
+  const saveBtn       = document.getElementById('saveBtn');
+  const zenTrigger    = document.getElementById('zen-trigger');
+  const controls      = document.getElementById('controls');
+  const zenFab        = document.getElementById('zen-fab');
+  const langSelect    = document.getElementById('langSelect');
 
   // ── 滚动 ──
   function getSpeed() {
@@ -538,7 +711,7 @@
 
   function stopPlay() {
     playing = false;
-    playBtn.textContent = '▶ 播放';
+    playBtn.textContent = t('play');
     playBtn.classList.remove('playing');
     cancelAnimationFrame(rafId);
     lastTime = null;
@@ -547,7 +720,7 @@
   function togglePlay() {
     playing = !playing;
     if (playing) {
-      playBtn.textContent = '⏸ 暂停';
+      playBtn.textContent = t('pause');
       playBtn.classList.add('playing');
       lastTime = null;
       rafId = requestAnimationFrame(tick);
@@ -609,9 +782,8 @@
   // ── 主题切换 ──
   function toggleTheme() {
     body.classList.toggle('light');
-    const isLight = body.classList.contains('light');
-    themeBtn.textContent = isLight ? '暗色' : '亮色';
-    themeBtn.classList.toggle('active', isLight);
+    themeBtn.textContent = body.classList.contains('light') ? t('dark') : t('light');
+    themeBtn.classList.toggle('active', body.classList.contains('light'));
   }
   themeBtn.addEventListener('click', toggleTheme);
 
@@ -627,13 +799,12 @@
 
   document.addEventListener('fullscreenchange', () => {
     const isFull = !!document.fullscreenElement;
-    fullscreenBtn.textContent = isFull ? '退出全屏' : '全屏';
+    fullscreenBtn.textContent = isFull ? t('exitFullscreen') : t('fullscreen');
     fullscreenBtn.classList.toggle('active', isFull);
   });
 
   // ── 无干扰模式 ──
   let zenRevealTimer = null;
-  const zenFab = document.getElementById('zen-fab');
 
   function toggleZen() {
     body.classList.toggle('zen');
@@ -644,12 +815,10 @@
 
   function zenShowControls() {
     if (!body.classList.contains('zen')) return;
-    // 必须用 translateY(0) 覆盖 CSS 的 translateY(-100%)
     controls.style.transform = 'translateY(0)';
     controls.style.opacity = '1';
     controls.style.pointerEvents = 'auto';
     body.classList.add('controls-peeking');
-    // 更新 FAB 下移量（跟随控制栏实际高度）
     document.documentElement.style.setProperty('--controls-h', controls.offsetHeight + 'px');
     clearTimeout(zenRevealTimer);
   }
@@ -668,7 +837,6 @@
     }, ms);
   }
 
-  // FAB 点击：显示控制栏 4 秒
   zenFab.addEventListener('click', () => {
     if (body.classList.contains('controls-peeking')) {
       zenHideControls();
@@ -678,13 +846,10 @@
     }
   });
 
-  // PC：鼠标移到顶部 8px 区域唤出
   zenTrigger.addEventListener('mouseenter', () => {
     zenShowControls();
     clearTimeout(zenRevealTimer);
   });
-
-  // 鼠标离开控制栏 → 延迟收起
   controls.addEventListener('mouseleave', () => {
     if (!body.classList.contains('zen')) return;
     zenStartAutoHide(600);
@@ -700,19 +865,19 @@
     overlay.classList.add('open');
     editorTa.focus();
   });
-
   cancelBtn.addEventListener('click', () => overlay.classList.remove('open'));
-
   saveBtn.addEventListener('click', () => {
     scriptText.textContent = editorTa.value;
     overlay.classList.remove('open');
     scrollY = 0;
     applyTransform();
   });
-
   overlay.addEventListener('click', e => {
     if (e.target === overlay) overlay.classList.remove('open');
   });
+
+  // ── 语言切换 ──
+  langSelect.addEventListener('change', () => applyLang(langSelect.value));
 
   // ── 键盘 ──
   document.addEventListener('keydown', e => {
@@ -753,42 +918,39 @@
     tapStartX = t.clientX;
     tapStartTime = performance.now();
   }, { passive: true });
-
   document.addEventListener('touchmove', e => {
     if (dragStartY == null) return;
     const max = scroller.scrollHeight - stage.clientHeight;
     scrollY = Math.max(0, Math.min(max, dragStartScroll + (dragStartY - e.touches[0].clientY)));
     applyTransform();
   }, { passive: true });
-
-  // 舞台 touchend：区分点按（播放/暂停）与拖动（调位置）
   stage.addEventListener('touchend', e => {
     if (tapStartY == null) return;
-    const t = e.changedTouches[0];
-    const dy = Math.abs(t.clientY - tapStartY);
-    const dx = Math.abs(t.clientX - tapStartX);
+    const touch = e.changedTouches[0];
+    const dy = Math.abs(touch.clientY - tapStartY);
+    const dx = Math.abs(touch.clientX - tapStartX);
     const dt = performance.now() - tapStartTime;
     if (dy < 12 && dx < 12 && dt < 350) togglePlay();
   });
-
   document.addEventListener('touchend', () => {
     dragStartY = null;
     tapStartY = null; tapStartX = null; tapStartTime = null;
   });
 
-  // ── 初始文稿 ──
-  scriptText.textContent = `大家好，欢迎来到今天的分享。
-
-今天我想和大家聊一聊，关于迈出第一步的勇气。
-
-每一段旅程，都始于一个微小的决定。
-不必完美，不必准备好一切，
-只需要开始。
-
-正如古人所言——
-千里之行，始于足下。
-
-感谢大家的聆听。`;
+  // ── 初始化语言 ──
+  (function initLang() {
+    const urlParam = new URLSearchParams(location.search).get('lang');
+    const saved    = localStorage.getItem('ticiqi-lang');
+    const browser  = (navigator.language || '').toLowerCase();
+    const detected = urlParam || saved ||
+      (browser.startsWith('zh-tw') || browser.startsWith('zh-hk') ? 'zh-TW'
+      : browser.startsWith('zh') ? 'zh-CN'
+      : browser.startsWith('ru')  ? 'ru'
+      : 'zh-CN');
+    const lang = LANGS[detected] ? detected : 'zh-CN';
+    applyLang(lang);
+    scriptText.textContent = LANGS[lang].sample;
+  })();
 </script>
 </body>
 </html>
