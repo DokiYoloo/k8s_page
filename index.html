@@ -465,6 +465,199 @@ body.ready .scroll-hint{opacity:1}
 }
 
 /* ============================================================
+   8b. AI Engineering
+   ============================================================ */
+.ai-sub{
+  margin:clamp(56px,8vh,96px) 0 0;
+  display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;
+}
+.ai-sub h3{
+  font-size:clamp(22px,3vw,38px);letter-spacing:-.035em;margin:0;
+}
+/* direct child only — otherwise this also hits the .grad span inside h3 */
+.ai-sub>span{font-size:13.5px;color:var(--dim);letter-spacing:.02em}
+
+/* -- three theses -- */
+.thesis{margin-top:clamp(38px,5vh,60px)}
+.thesis-item{
+  position:relative;display:grid;grid-template-columns:auto 1fr;
+  gap:clamp(16px,3vw,42px);align-items:start;
+  padding:clamp(22px,3vw,34px) clamp(14px,2vw,26px);
+  border-top:1px solid var(--stroke);
+}
+.thesis-item:last-child{border-bottom:1px solid var(--stroke)}
+.thesis-item::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,rgba(124,92,255,.15),rgba(34,211,238,.05) 42%,transparent 68%);
+  opacity:0;transition:opacity .55s var(--ease);
+}
+.thesis-item:hover::before{opacity:1}
+.thesis-n{
+  position:relative;z-index:1;
+  font-family:"Space Grotesk",sans-serif;font-weight:700;line-height:1;
+  font-size:clamp(26px,3.4vw,44px);letter-spacing:-.045em;
+  color:transparent;-webkit-text-stroke:1.2px rgba(255,255,255,.32);
+  transition:color .5s,-webkit-text-stroke-color .5s;
+}
+.thesis-item:hover .thesis-n{color:var(--c);-webkit-text-stroke-color:transparent}
+.thesis-b{position:relative;z-index:1}
+.thesis-t{
+  font-family:"Space Grotesk",sans-serif;font-weight:600;
+  font-size:clamp(18px,2.1vw,28px);letter-spacing:-.03em;line-height:1.28;
+  margin:0 0 11px;
+}
+.thesis-d{margin:0;color:var(--muted);font-size:clamp(14px,1.2vw,16px);line-height:1.85;max-width:64ch}
+
+/* -- CLAUDE.md sample card -- */
+.codecard{margin-top:clamp(30px,4vh,46px);border-radius:22px}
+.codecard-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:13px 18px;border-bottom:1px solid var(--stroke);
+  background:rgba(255,255,255,.03);
+}
+.codecard-bar i{width:10px;height:10px;border-radius:50%;background:#ff5f57;flex:none}
+.codecard-bar i:nth-child(2){background:#febc2e}
+.codecard-bar i:nth-child(3){background:#28c840}
+.codecard-bar b{
+  margin-left:8px;font-weight:500;font-size:12px;color:var(--muted);
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.02em;
+}
+.codecard pre{
+  margin:0;padding:clamp(18px,2.4vw,28px);overflow-x:auto;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:13px;line-height:1.9;color:#c9c6dc;
+}
+.codecard .cm{color:var(--dim)}
+.codecard .pth{color:var(--c)}
+.codecard .kw{color:var(--p)}
+
+/* -- four-layer accordion stack -- */
+.layers{display:grid;gap:12px;margin-top:clamp(28px,4vh,44px)}
+.layer{
+  position:relative;border-radius:20px;overflow:hidden;cursor:pointer;
+  border:1px solid var(--stroke);
+  background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.018));
+  transition:transform .55s var(--ease),border-color .45s,background .45s,box-shadow .55s,opacity .45s;
+}
+.layer::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;z-index:2;
+  background:var(--lc,var(--v));opacity:.4;
+  transition:opacity .45s,width .45s var(--ease),box-shadow .5s;
+}
+.layer:not(.on){transform:scale(.986);opacity:.6}
+.layer:not(.on):hover{opacity:.82}
+.layer.on{
+  border-color:var(--stroke-2);
+  background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.032));
+  box-shadow:0 34px 76px -38px rgba(0,0,0,.9);
+}
+.layer.on::before{opacity:1;width:5px;box-shadow:0 0 26px var(--lc)}
+.layer-head{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+  gap:clamp(14px,2vw,26px);padding:clamp(18px,2.4vw,25px) clamp(20px,2.6vw,30px);
+}
+.layer-idx{
+  font-family:"Space Grotesk",sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:.14em;color:var(--lc);
+}
+.layer-title{margin:0;font-size:clamp(16px,1.7vw,21px);letter-spacing:-.025em;line-height:1.35}
+.layer-title small{
+  display:block;margin-top:5px;font-size:13px;font-weight:400;color:var(--muted);
+  font-family:"Inter",sans-serif;letter-spacing:0;
+}
+.layer-chev{
+  width:30px;height:30px;border-radius:50%;flex:none;
+  border:1px solid var(--stroke-2);display:grid;place-items:center;
+  font-size:13px;line-height:1;color:var(--muted);
+  transition:transform .5s var(--ease),background .4s,color .4s,border-color .4s;
+}
+.layer.on .layer-chev{transform:rotate(180deg);background:var(--lc);color:#06060b;border-color:transparent}
+.layer-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .6s var(--ease)}
+.layer.on .layer-body{grid-template-rows:1fr}
+.layer-body>div{overflow:hidden;min-height:0}
+.layer-body ul{
+  margin:0;list-style:none;display:grid;gap:11px;
+  padding:2px clamp(20px,2.6vw,30px) clamp(20px,2.6vw,26px) clamp(20px,2.6vw,30px);
+}
+.layer-body li{position:relative;padding-left:22px;color:var(--muted);font-size:14.5px;line-height:1.78}
+.layer-body li::before{
+  content:"";position:absolute;left:3px;top:.7em;width:6px;height:6px;border-radius:2px;
+  background:var(--lc);opacity:.85;transform:rotate(45deg);
+}
+.layer-body code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;
+  padding:2px 6px;border-radius:6px;color:var(--fg);
+  background:rgba(255,255,255,.07);border:1px solid var(--stroke);
+}
+
+/* -- consistency flow -- */
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:clamp(28px,4vh,44px)}
+@media (max-width:860px){.flow{grid-template-columns:repeat(2,1fr);gap:22px 14px}}
+@media (max-width:560px){.flow{grid-template-columns:1fr;gap:26px}}
+.flow-node{
+  position:relative;padding:22px 20px 24px;border-radius:18px;
+  border:1px solid var(--stroke);background:rgba(255,255,255,.028);
+  transition:transform .5s var(--ease),border-color .4s,background .4s;
+}
+.flow-node:hover{transform:translateY(-6px);border-color:var(--stroke-2);background:rgba(255,255,255,.07)}
+.flow-node::after{
+  content:"→";position:absolute;right:-15px;top:50%;transform:translateY(-50%);
+  font-size:14px;color:var(--dim);z-index:2;
+}
+.flow-node:last-child::after{content:none}
+@media (max-width:860px){
+  .flow-node:nth-child(2)::after{content:none}
+  .flow-node:nth-child(2n)::after{content:none}
+}
+@media (max-width:560px){
+  .flow-node::after{content:"↓";right:auto;left:50%;top:auto;bottom:-19px;transform:translateX(-50%)}
+  .flow-node:nth-child(2)::after{content:"↓"}
+}
+.flow-k{display:block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.flow-t{font-family:"Space Grotesk",sans-serif;font-size:16px;font-weight:600;letter-spacing:-.02em;margin:0 0 7px}
+.flow-d{margin:0;font-size:13.5px;color:var(--muted);line-height:1.7}
+.flow-note{
+  margin:22px 0 0;padding:18px 22px;border-radius:16px;
+  border-left:2px solid var(--c);background:rgba(34,211,238,.05);
+  color:var(--muted);font-size:14.5px;line-height:1.8;
+}
+.flow-note b{color:var(--fg);font-weight:600}
+
+/* -- outlook timeline -- */
+.outlook{
+  display:grid;grid-template-columns:.85fr 1.15fr;
+  gap:clamp(28px,5vw,70px);align-items:start;
+  margin-top:clamp(56px,8vh,96px);
+}
+@media (max-width:900px){.outlook{grid-template-columns:1fr;gap:30px}}
+.outlook-head{position:sticky;top:calc(var(--nav-h) + 40px)}
+@media (max-width:900px){.outlook-head{position:static}}
+.outlook-head .ai-sub{margin-top:0}
+.tl{position:relative;padding-left:32px}
+.tl::before{
+  content:"";position:absolute;left:5px;top:8px;bottom:8px;width:1px;
+  background:linear-gradient(180deg,var(--v),var(--c) 45%,var(--p) 75%,transparent);
+}
+.tl-item{position:relative;padding-bottom:clamp(26px,3.4vh,40px)}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{
+  content:"";position:absolute;left:-32px;top:6px;width:11px;height:11px;border-radius:50%;
+  background:var(--bg);border:1.5px solid var(--tc,var(--v));
+  transition:background .5s,box-shadow .5s;
+}
+.tl-item:hover::before{background:var(--tc);box-shadow:0 0 0 6px color-mix(in srgb,var(--tc) 20%,transparent)}
+.tl-k{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--tc);margin-bottom:9px}
+.tl-t{font-family:"Space Grotesk",sans-serif;font-weight:600;letter-spacing:-.025em;margin:0 0 9px;font-size:clamp(17px,1.9vw,23px)}
+.tl-d{margin:0;color:var(--muted);font-size:14.5px;line-height:1.85;max-width:66ch}
+.tl-item.pin .tl-d{color:var(--fg)}
+.tl-item.pin{
+  padding:22px 24px;border-radius:18px;margin-left:-4px;
+  border:1px solid var(--stroke-2);background:rgba(255,255,255,.045);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+}
+.tl-item.pin::before{top:28px;left:-28px}
+
+/* ============================================================
    9. Works — sticky stacking panels
    ============================================================ */
 .stack{position:relative;perspective:1600px}
@@ -673,6 +866,7 @@ body.ready .scroll-hint{opacity:1}
     <div class="nav-pill" id="navPill" aria-hidden="true"></div>
     <a href="#home"    data-link>首页</a>
     <a href="#about"   data-link>关于</a>
+    <a href="#ai"      data-link>AI</a>
     <a href="#works"   data-link>作品</a>
     <a href="#gallery" data-link>画廊</a>
     <a href="#contact" data-link>联系</a>
@@ -798,6 +992,238 @@ body.ready .scroll-hint{opacity:1}
         <div class="tagline"><span class="tag">rAF</span><span class="tag">GPU</span><span class="tag">Lighthouse</span></div>
       </article>
     </div>
+
+  </div>
+</section>
+
+<!-- ===================== AI ENGINEERING ===================== -->
+<section id="ai" class="sec-pad">
+  <div class="wrap">
+
+    <!-- ---------- 立论 ---------- -->
+    <span class="eyebrow reveal"><i></i>AI Engineering</span>
+    <h2 class="sec-title reveal d1" style="margin:22px 0 20px">
+      AI 不是更快的手，<br><span class="grad">是更大的上下文</span>
+    </h2>
+    <p class="sec-lead reveal d2">
+      我对 AI 的判断在过去两年被改写过一次：它一开始像个「打字更快的人」，
+      现在我更愿意把它当作团队协作协议的一部分。下面是我目前的三条判断，
+      以及在几十人规模的项目里真正落得下去的做法。
+    </p>
+
+    <div class="thesis">
+      <div class="thesis-item reveal">
+        <span class="thesis-n">01</span>
+        <div class="thesis-b">
+          <h3 class="thesis-t">AI 放大的是规范，不是产能</h3>
+          <p class="thesis-d">
+            同一个模型，在约定清晰的仓库里是加速器，在约定混乱的仓库里是放大器——
+            它会以更快的速度，把已有的混乱复制到每一个角落。
+            所以引入 AI 的第一步从来不是选工具，而是把团队里那些「大家心里都懂」的隐性约定，
+            变成任何人都能读到的显性文字。
+          </p>
+        </div>
+      </div>
+
+      <div class="thesis-item reveal d1">
+        <span class="thesis-n">02</span>
+        <div class="thesis-b">
+          <h3 class="thesis-t">提示词不是资产，上下文才是</h3>
+          <p class="thesis-d">
+            个人调教出来的 prompt 会跟着聊天记录一起消失，也无法被第二个人复用。
+            真正沉淀下来的，是仓库里那份任何人、任何时刻拉下来都能读到的约定文件——
+            它跟着代码走，跟着 PR 一起被 review，过期了就按 bug 处理。
+          </p>
+        </div>
+      </div>
+
+      <div class="thesis-item reveal d2">
+        <span class="thesis-n">03</span>
+        <div class="thesis-b">
+          <h3 class="thesis-t">生成很便宜，验证很贵</h3>
+          <p class="thesis-d">
+            当写一千行的成本趋近于零，瓶颈就整个移动到了「怎么确认这一千行是对的」。
+            工程化的重心也因此从提效转向建立信任链：类型、测试、CI、明确的人工确认点，
+            一个都不能省。评审能力，正在变得比编写能力更值钱。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- 落地：四层规范 ---------- -->
+    <div class="ai-sub reveal">
+      <h3>把 AI 装进大型项目的<span class="grad">四层地基</span></h3>
+      <span>Context · Guardrail · Workflow · Evaluation</span>
+    </div>
+    <p class="sec-lead reveal d1" style="margin-top:14px">
+      从下往上，每一层只解决一个问题。缺了任何一层，上面的都会塌。
+    </p>
+
+    <div class="glass codecard reveal d2">
+      <div class="codecard-bar"><i></i><i></i><i></i><b>CLAUDE.md — 仓库根目录</b></div>
+      <pre><span class="cm"># 技术栈</span>
+Next.js 15 · TypeScript strict · Prisma · Tailwind
+
+<span class="cm"># 目录语义（AI 与人共用同一套）</span>
+<span class="pth">app/</span>        路由与页面，禁止写业务逻辑
+<span class="pth">core/</span>       领域模型，不依赖任何框架
+<span class="pth">adapters/</span>   外部系统的唯一出入口
+
+<span class="cm"># 禁区 —— 改动一律需要人工确认</span>
+<span class="kw">prisma/migrations/**</span>   <span class="kw">auth/**</span>   <span class="kw">billing/**</span>
+
+<span class="cm"># 约定</span>
+一个 PR 只做一件事；新增依赖必须先在 issue 里讨论</pre>
+    </div>
+
+    <div class="layers reveal d2">
+      <article class="layer" data-layer style="--lc:var(--v)" role="button" tabindex="0" aria-expanded="true">
+        <div class="layer-head">
+          <span class="layer-idx">L01</span>
+          <h4 class="layer-title">Context · 上下文层<small>规范住「它知道什么」</small></h4>
+          <span class="layer-chev" aria-hidden="true">▾</span>
+        </div>
+        <div class="layer-body"><div><ul>
+          <li>仓库根部一份 <code>CLAUDE.md</code> / <code>AGENTS.md</code>：技术栈、目录语义、命名与提交约定、明确的禁区</li>
+          <li>按目录分层覆写，让每个子系统自带它自己的上下文，而不是塞进一个越来越长的巨型文件</li>
+          <li>上下文文件是代码的一部分：跟着 PR 提交、跟着 PR 被 review，写错了和写错代码一样要改</li>
+          <li>宁可写「不要做什么」。禁区比正面描述更能约束住一个乐于助人的模型</li>
+        </ul></div></div>
+      </article>
+
+      <article class="layer" data-layer style="--lc:var(--c)" role="button" tabindex="0" aria-expanded="false">
+        <div class="layer-head">
+          <span class="layer-idx">L02</span>
+          <h4 class="layer-title">Guardrail · 护栏层<small>规范住「它能改什么」</small></h4>
+          <span class="layer-chev" aria-hidden="true">▾</span>
+        </div>
+        <div class="layer-body"><div><ul>
+          <li>生成的代码走和人完全一样的门：类型检查、lint、单测、CI，不设特例通道、不开绿色通道</li>
+          <li>迁移脚本、鉴权、支付、密钥这类目录显式标记为需人工确认，工具再自信也不能自己按下去</li>
+          <li>可自动执行的命令是一份枚举出来的白名单，而不是一句「你看着办」</li>
+          <li>高风险改动跑在隔离的分支或工作树里——「随时可以整个丢掉」是最便宜的安全网</li>
+        </ul></div></div>
+      </article>
+
+      <article class="layer" data-layer style="--lc:var(--p)" role="button" tabindex="0" aria-expanded="false">
+        <div class="layer-head">
+          <span class="layer-idx">L03</span>
+          <h4 class="layer-title">Workflow · 工作流层<small>规范住「它怎么做」</small></h4>
+          <span class="layer-chev" aria-hidden="true">▾</span>
+        </div>
+        <div class="layer-body"><div><ul>
+          <li>把高频任务固化成可调用的技能与命令：发版、建模块、写迁移，取代每个人各自的临场发挥</li>
+          <li>大改动一律先出方案再落地。方案本身就是 review 对象，它比 diff 更早暴露分歧，也更便宜</li>
+          <li>约定单次任务的粒度：一个任务一个目标，能在一次 review 里读完</li>
+          <li>让工具自己跑验证——测试、构建、截图。人来判断结果，而不是替它跑一遍</li>
+        </ul></div></div>
+      </article>
+
+      <article class="layer" data-layer style="--lc:var(--y)" role="button" tabindex="0" aria-expanded="false">
+        <div class="layer-head">
+          <span class="layer-idx">L04</span>
+          <h4 class="layer-title">Evaluation · 评估层<small>规范住「做得好不好」</small></h4>
+          <span class="layer-chev" aria-hidden="true">▾</span>
+        </div>
+        <div class="layer-body"><div><ul>
+          <li>先定义什么叫「这次用对了」：一次通过率、review 返工率、缺陷密度——而不是「感觉快了很多」</li>
+          <li>规范本身也要做回归：改了约定，要能验证产出质量没有偷偷退化</li>
+          <li>每个失败案例都回流成下一版上下文，让同一个坑只踩一次</li>
+          <li>警惕唯一真正危险的指标：代码量。它涨得最快，也最没有意义</li>
+        </ul></div></div>
+      </article>
+    </div>
+
+    <!-- ---------- 团队一致性 ---------- -->
+    <div class="ai-sub reveal">
+      <h3>让一支团队用出<span class="grad">同一种手感</span></h3>
+      <span>Individual → Commit → Verify → Inherit</span>
+    </div>
+    <p class="sec-lead reveal d1" style="margin-top:14px">
+      个人效率的提升会自然发生，一致性不会——它必须被设计出来。
+      我的做法是把「某个人的好用做法」变成一条固定的流转链路。
+    </p>
+
+    <div class="flow reveal d2">
+      <div class="flow-node">
+        <span class="flow-k">01 · Individual</span>
+        <h4 class="flow-t">有人试出来了</h4>
+        <p class="flow-d">某个同事摸索出一套好用的方式，此刻它还只存在于他自己的手感里。</p>
+      </div>
+      <div class="flow-node">
+        <span class="flow-k">02 · Commit</span>
+        <h4 class="flow-t">写进版本库</h4>
+        <p class="flow-d">不进收藏夹、不进群聊、不进个人笔记——提交成仓库里的一次改动。</p>
+      </div>
+      <div class="flow-node">
+        <span class="flow-k">03 · Verify</span>
+        <h4 class="flow-t">被自动检查</h4>
+        <p class="flow-d">规范和代码一样会腐坏，所以它同样需要 CI 来证明自己还成立。</p>
+      </div>
+      <div class="flow-node">
+        <span class="flow-k">04 · Inherit</span>
+        <h4 class="flow-t">全员继承</h4>
+        <p class="flow-d">新人第一天克隆下来，就带着团队至今为止的全部约定，不需要口口相传。</p>
+      </div>
+    </div>
+
+    <p class="flow-note reveal d3">
+      这条链路里最关键的是第二步。团队不该奖励<b>「我的 prompt 更好」</b>，
+      而该奖励<b>「我把它写进了规范」</b>——前者制造个人英雄，后者才产生一致性。
+    </p>
+
+    <!-- ---------- 展望 ---------- -->
+    <div class="outlook">
+      <div class="outlook-head">
+        <div class="ai-sub reveal">
+          <h3>接下来会<span class="grad">发生什么</span></h3>
+        </div>
+        <p class="sec-lead reveal d1" style="margin-top:18px">
+          我的展望，以及我认为不会变的那部分。
+          越是往后，我越觉得关键变量不在模型，而在我们把话说清楚的能力。
+        </p>
+      </div>
+
+    <div class="tl reveal d1">
+      <div class="tl-item" style="--tc:var(--v)">
+        <span class="tl-k">Now · 现在</span>
+        <h4 class="tl-t">结对的另一半</h4>
+        <p class="tl-d">
+          AI 承担生成，人承担判断。协作的单位还是文件和函数，
+          节奏仍然是「我说一句、它写一段、我看一眼」。
+        </p>
+      </div>
+
+      <div class="tl-item" style="--tc:var(--c)">
+        <span class="tl-k">Next · 下一步</span>
+        <h4 class="tl-t">从按键，到编排</h4>
+        <p class="tl-d">
+          协作单位会从「文件」上移到「任务」。工程师的日常将从敲代码，
+          变成拆解任务、给出验收标准、并行编排多个 agent 再合流。
+          而这要求团队先有清晰的任务边界和接口契约——绕了一圈，还是回到规范。
+        </p>
+      </div>
+
+      <div class="tl-item" style="--tc:var(--p)">
+        <span class="tl-k">Later · 再远一点</span>
+        <h4 class="tl-t">规范成为主产物</h4>
+        <p class="tl-d">
+          如果生成足够可靠，仓库里最有价值的资产会是那份把业务约束写清楚的规范，
+          代码更像是它的编译产物。到那时，「写文档」不再是发布前的负担，而是主要工作本身。
+        </p>
+      </div>
+
+      <div class="tl-item pin" style="--tc:var(--y)">
+        <span class="tl-k">Constant · 不变的</span>
+        <h4 class="tl-t">责任无法外包</h4>
+        <p class="tl-d">
+          无论工具走多远，签下这个 PR、在故障复盘会上说明原因的，永远是人。
+          这也是我不追求「全自动」的原因——我要的从来不是一条无人值守的流水线，
+          而是一条我随时能接管、也随时说得清它为什么这么做的链路。
+        </p>
+      </div>
+    </div><!-- /.tl -->
+    </div><!-- /.outlook -->
 
   </div>
 </section>
@@ -1271,7 +1697,7 @@ if (!coarse) {
   // hover states
   document.addEventListener('pointerover', e => {
     const t = e.target;
-    document.body.classList.toggle('cur-hover', !!t.closest('a,button,.tag,.chip,.card'));
+    document.body.classList.toggle('cur-hover', !!t.closest('a,button,.tag,.chip,.card,.layer,.flow-node,.thesis-item'));
     document.body.classList.toggle('cur-view', !!t.closest('.shot'));
   });
 
@@ -1371,6 +1797,27 @@ if (!coarse) {
       { duration: 5200 + i * 700, iterations: Infinity, easing: 'ease-in-out', delay: i * 400, composite: 'add' }
     );
   });
+}
+
+/* ============================================================
+   H2. Four-layer accordion (AI section)
+   Exactly one layer is open at a time: hover on desktop, tap on touch.
+   ============================================================ */
+const layerEls = $$('[data-layer]');
+if (layerEls.length) {
+  const openLayer = i => layerEls.forEach((l, k) => {
+    const on = k === i;
+    l.classList.toggle('on', on);
+    l.setAttribute('aria-expanded', on ? 'true' : 'false');
+  });
+  layerEls.forEach((l, i) => {
+    l.addEventListener('click', () => openLayer(i));
+    l.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLayer(i); }
+    });
+    if (!coarse) l.addEventListener('pointerenter', () => openLayer(i));
+  });
+  openLayer(0);
 }
 
 /* ============================================================
